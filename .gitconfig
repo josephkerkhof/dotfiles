@@ -1,0 +1,17 @@
+[user]
+	email = joseph@kerkhof.dev
+	name = Joseph Kerkhof
+	signingkey = C83371072DC8C46C
+[core]
+	editor = nvim
+[commit]
+	gpgsign = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential]
+	helper = store
+[includeIf "gitdir:~/dev/Cw/"]
+	path = ~/dev/Cw/.gitconfig
