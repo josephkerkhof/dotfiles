@@ -21,13 +21,14 @@ set expandtab       " use appropriate number of spaces to insert a tab"
 set smarttab        " tab in front of a line inserts blanks according to 'shiftwidth'
 
 " editor
-set encoding=UTF-8  " Set encoding to UFT-8
-set number          " show line numbers
-set title           " show the filename in the terminal window
-set scrolloff=10    " number of scroll lines to keep above and below the cursor
-filetype plugin on  " enable filetype plugin for nerdcommenter
-set autoread        " automatically read file changes outside of vim from disk
-set colorcolumn=80  " adds a vertical line at 80 characters
+set encoding=UTF-8         " Set encoding to UTF-8
+set number                 " show line numbers
+set title                  " show the filename in the terminal window
+set scrolloff=10           " number of scroll lines to keep above and below the cursor
+filetype plugin on         " enable filetype plugin for nerdcommenter
+set autoread               " automatically read file changes outside of vim from disk
+set colorcolumn=80         " adds a vertical line at 80 characters
+set spell spelllang=en_us  " enables spell checking
 
 " whitespace characters
 set list listchars=tab:>-,trail:~,space:·,extends:>,precedes:<
