@@ -13,5 +13,7 @@
 	required = true
 [credential]
 	helper = store
-[includeIf "gitdir:~/dev/Cw/"]
-	path = ~/dev/Cw/.gitconfig
+[includeIf "gitdir:~/dev/clockwork/"]
+	path = ~/dev/clockwork/.gitconfig
+[includeIf "gitdir:~/dev/bitcoin/"]
+	path = ~/dev/bitcoin/.gitconfig

@@ -29,6 +29,7 @@ filetype plugin on         " enable filetype plugin for nerdcommenter
 set autoread               " automatically read file changes outside of vim from disk
 set colorcolumn=80         " adds a vertical line at 80 characters
 set spell spelllang=en_us  " enables spell checking
+set clipboard=unnamed      " allows clipboard access across other applications
 
 " whitespace characters
 set list listchars=tab:>-,trail:~,space:·,extends:>,precedes:<
