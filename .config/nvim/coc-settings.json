@@ -1,5 +1,3 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": [
-    "json"
-  ]
+  "coc.preferences.formatOnSaveFiletypes": []
 }
