@@ -16,7 +16,7 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
 fi
 
 # Weather
-alias weather='curl wttr.in/Beloit'
+alias weather='curl wttr.in/Beloit?u'
 
 # Pacman package search
 alias pmsearch="pacman -Slq | fzf --preview 'pacman -Si {}' --layout=reverse"
