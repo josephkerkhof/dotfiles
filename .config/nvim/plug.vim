@@ -18,6 +18,10 @@ if has("nvim")
   Plug 'rust-lang/rust.vim'
   Plug 'nelsyeung/twig.vim'
   Plug 'preservim/nerdcommenter'
+  Plug 'heavenshell/vim-jsdoc', {
+  \ 'for': ['javascript', 'javascript.jsx','typescript'],
+  \ 'do': 'make install'
+\}
 endif
 
 call plug#end()
