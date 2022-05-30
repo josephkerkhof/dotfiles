@@ -19,9 +19,10 @@ if has("nvim")
   Plug 'nelsyeung/twig.vim'
   Plug 'preservim/nerdcommenter'
   Plug 'heavenshell/vim-jsdoc', {
-  \ 'for': ['javascript', 'javascript.jsx','typescript'],
-  \ 'do': 'make install'
-\}
+    \ 'for': ['javascript', 'javascript.jsx','typescript'],
+    \ 'do': 'make install'
+  \}
+  Plug 'ap/vim-css-color'
 endif
 
 call plug#end()
