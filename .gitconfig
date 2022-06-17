@@ -17,3 +17,5 @@
 	path = ~/dev/clockwork/.gitconfig
 [includeIf "gitdir:~/dev/bitcoin/"]
 	path = ~/dev/bitcoin/.gitconfig
+[push]
+	default = current
