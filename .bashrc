@@ -57,10 +57,12 @@ PROMPT_COMMAND="history -a;$PROMPT_COMMAND"
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# alias definitions
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+# Load ~/.extra, ~/.bash_prompt, ~/.exports, ~/.aliases and ~/.functions
+# ~/.extra can be used for settings you don’t want to commit
+for file in ~/.{extra,bash_prompt,exports,aliases,functions}; do
+	[ -r "$file" ] && source "$file"
+done
+unset file
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
