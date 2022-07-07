@@ -29,3 +29,8 @@ fi
 if [ -d ~/.config/composer/vendor/bin ]; then
     PATH=$PATH:~/.config/composer/vendor/bin
 fi
+
+## yarn
+if [ -d ~/.yarn/bin ]; then
+  PATH=$PATH:~/.yarn/bin
+fi
