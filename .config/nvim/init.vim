@@ -12,6 +12,10 @@ endif
 
 " Fundamentals "{{{
 " ---------------------------------------------------------------------
+" set the leader key to the spacebar
+nnoremap <SPACE> <Nop>
+let mapleader=" "
+
 " indents
 set shiftwidth=2
 set tabstop=2
@@ -22,14 +26,18 @@ set smarttab        " tab in front of a line inserts blanks according to 'shiftw
 
 " editor
 set encoding=UTF-8         " Set encoding to UTF-8
-set number                 " show line numbers
+set number relativenumber  " show line numbers
 set title                  " show the filename in the terminal window
 set scrolloff=10           " number of scroll lines to keep above and below the cursor
-filetype plugin on         " enable filetype plugin for nerdcommenter
 set autoread               " automatically read file changes outside of vim from disk
 set colorcolumn=80         " adds a vertical line at 80 characters
 set spell spelllang=en_us  " enables spell checking
 set clipboard=unnamed      " allows clipboard access across other applications
+
+" nerdcommenter
+filetype plugin on                          " enable filetype plugin for nerdcommenter
+nmap <leader>/ <plug>NERDCommenterToggle    " remap comment toggle for normal mode
+vmap <leader>/ <plug>NERDCommenterToggle gv " remap comment toggle for visual mode
 
 " whitespace characters
 set list listchars=tab:>-,trail:~,space:·,extends:>,precedes:<
@@ -49,54 +57,8 @@ imap <right> <nop>
 
 " Colors and Theme "{{{
 " ---------------------------------------------------------------------
-colorscheme nord
+autocmd vimenter * ++nested colorscheme gruvbox
 set cursorline
-let g:nord_cursor_line_number_background = 1
-"}}}
-
-" Airline "{{{
-" ---------------------------------------------------------------------
-let g:airline_powerline_fonts = 1
-"}}}
-
-" Terminal "{{{
-" ---------------------------------------------------------------------
-" set insert mode when opening terminal
-autocmd TermOpen * startinsert
-" remove line numbers in the terminal
-autocmd TermOpen * setlocal nonumber norelativenumber
-
-" Toggle terminal function
-let g:term_buf = 0
-let g:term_win = 0
-function! TermToggle(height)
-  if win_gotoid(g:term_win)
-    hide
-  else
-    botright new
-    exec "resize " . a:height
-    try
-      exec "buffer " . g:term_buf
-    catch
-      call termopen($SHELL, {"detach": 0})
-      let g:term_buf = bufnr("")
-      set nonumber
-      set norelativenumber
-      set signcolumn=no
-    endtry
-    startinsert!
-    let g:term_win = win_getid()
-  endif
-endfunction
-
-" Toggle terminal on/off
-nnoremap <A-t> :call TermToggle(12)<CR>
-inoremap <A-t> <Esc>:call TermToggle(12)<CR>
-tnoremap <A-t> <C-\><C-n>:call TermToggle(12)<CR>
-
-" Terminal go back to normal mode
-tnoremap <Esc> <C-\><C-n>
-tnoremap :q! <C-\><C-n>:q!<CR>
 "}}}
 
 " Plugins "{{{
@@ -104,8 +66,6 @@ tnoremap :q! <C-\><C-n>:q!<CR>
 runtime ./plugins/coc.vim
 runtime ./plugins/nerdtree.vim
 runtime ./plugins/vdebug.vim
-"runtime ./plugins/syntastic.vim
-runtime ./plugins/rust.vim
 runtime ./plugins/templates.vim
-runtime ./plugins/denite.vim
+runtime ./plugins/telescope.vim
 "}}}

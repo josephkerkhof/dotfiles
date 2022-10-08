@@ -111,4 +111,10 @@ function parse_git_branch {
 }
 
 export PS1="\n\t \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+
+# Start tmux with every session
+#if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+  #exec tmux new-session -A -s main
+#fi
+
 # End bash prompt customizations

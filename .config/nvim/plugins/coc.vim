@@ -174,6 +174,9 @@ let g:coc_global_extensions = [
   \ "coc-tsserver",
   \ "coc-eslint",
   \ "coc-prettier",
-  \ "coc-rls",
-  \ "coc-pyright"
+  \ "coc-pyright",
+  \ "coc-cfn-lint",
+  \ "coc-yaml",
+  \ "coc-markdownlint",
+  \ "coc-rust-analyzer"
   \ ]
