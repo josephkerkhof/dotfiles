@@ -102,15 +102,8 @@ if [ -f ~/.tokens ]; then
   source ~/.tokens
 fi
 
-# Begin bash prompt customizations
-export PS1="\[\e[38;5;216m\]\u\[\e[38;5;220m\]@\[\e[38;5;222m\]\h \[\e[38;5;229m\]\w \[\033[0m\]$ "
+# Start starship prompt
+eval "$(starship init bash)"
 
-
-
-# Start tmux with every session
-#if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  #exec tmux new-session -A -s main
-#fi
-
-# End bash prompt customizations
 . "$HOME/.cargo/env"
+# End bash prompt customizations
