@@ -16,9 +16,11 @@ if has("nvim")
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'jiangmiao/auto-pairs'
   Plug 'vim-vdebug/vdebug'
-  Plug 'preservim/nerdtree'
-  Plug 'Xuyuanp/nerdtree-git-plugin'
-  Plug 'ryanoasis/vim-devicons'
+"  Plug 'preservim/nerdtree'
+"  Plug 'Xuyuanp/nerdtree-git-plugin'
+"  Plug 'ryanoasis/vim-devicons'
+  Plug 'nvim-tree/nvim-web-devicons' " optional, for file icons
+  Plug 'nvim-tree/nvim-tree.lua'
   Plug 'vim-syntastic/syntastic'
   Plug 'nelsyeung/twig.vim'
   Plug 'preservim/nerdcommenter'
