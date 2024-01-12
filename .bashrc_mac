@@ -1,5 +1,0 @@
-# Replace vim with neovim
-alias vim="nvim"
-
-# Add Mac Composer to Path
-export PATH="~/.composer/vendor/bin:$PATH"
