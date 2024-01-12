@@ -1,21 +1,5 @@
 [user]
 	email = joseph@kerkhof.dev
 	name = Joseph Kerkhof
-	signingkey = 71A696CAC91CEA76
-[core]
-	editor = nvim
 [commit]
 	gpgsign = true
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-[credential]
-	helper = store
-[includeIf "gitdir:~/code/clockwork/"]
-	path = ~/code/clockwork/.gitconfig
-[includeIf "gitdir:~/code/bitcoin/"]
-	path = ~/code/bitcoin/.gitconfig
-[push]
-	default = current
