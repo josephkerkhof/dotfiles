@@ -1,2 +1,0 @@
-# nitro mailhog port override
-export NITRO_MAILHOG_SMTP_PORT=1026
