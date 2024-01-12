@@ -106,3 +106,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Laravel Sail
 alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+
+# Dotfile management
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
