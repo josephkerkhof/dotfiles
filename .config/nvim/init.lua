@@ -136,7 +136,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -320,6 +320,15 @@ vim.o.breakindent = true
 
 -- Save undo history
 vim.o.undofile = true
+
+-- Auto-reload files when modified externally
+-- https://unix.stackexchange.com/a/383044
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGained" }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = { "*" },
+})
+
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
@@ -530,7 +539,7 @@ local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 parser_config.blade = {
   install_info = {
     url = "https://github.com/EmranMR/tree-sitter-blade",
-    files = {"src/parser.c"},
+    files = { "src/parser.c" },
     branch = "main",
   },
   filetype = "blade"
@@ -624,7 +633,7 @@ local servers = {
   pyright = {},
   rust_analyzer = {},
   tsserver = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
   phpactor = {},
 
   lua_ls = {
