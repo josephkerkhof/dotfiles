@@ -5,4 +5,21 @@
 
 ---@module 'lazy'
 ---@type LazySpec
-return {}
+return {
+  {
+    'rmagatti/auto-session',
+    lazy = false,
+    opts = {},
+  },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      open_mapping = '<leader>tt',
+      direction = 'float',
+    },
+    keys = {
+      { '<leader>tt', desc = '[T]oggle [T]erminal' },
+    },
+  },
+}
