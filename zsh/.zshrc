@@ -1,8 +1,35 @@
-# Oh My Zsh
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
+# Completion
+autoload -Uz compinit
+compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+setopt COMPLETE_ALIASES
+
+# History
+HISTFILE="$XDG_CONFIG_HOME/zsh/history"
+HISTSIZE=10000000
+SAVEHIST=10000000
+setopt INC_APPEND_HISTORY
+
+# Vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+# Change cursor shape for vi modes
+function zle-keymap-select {
+  if [[ $KEYMAP == vicmd ]] || [[ $1 == 'block' ]]; then
+    echo -ne '\e[2 q'
+  elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] || [[ $1 == 'beam' ]]; then
+    echo -ne '\e[6 q'
+  fi
+}
+zle -N zle-keymap-select
+echo -ne '\e[6 q' # beam cursor on startup
+
+# Edit command in nvim with ctrl-e
+autoload edit-command-line
+zle -N edit-command-line
+bindkey '^e' edit-command-line
 
 # Editor
 export EDITOR='nvim'
@@ -34,3 +61,9 @@ alias ae="cd ~/code/ae"
 
 # Secrets
 [ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
+
+# Prompt
+eval "$(starship init zsh)"
+
+# Syntax highlighting (must be last)
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
