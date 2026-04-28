@@ -9,7 +9,19 @@ return {
   {
     'rmagatti/auto-session',
     lazy = false,
-    opts = {},
+    opts = {
+      auto_save = true,
+      auto_restore = true,
+      cwd_change_handling = false,
+      suppressed_dirs = {
+        '/',
+        '~/Downloads',
+        vim.fn.stdpath 'data' .. '/lazy/*',
+      },
+      session_lens = {
+        picker = 'telescope',
+      },
+    },
   },
   {
     'akinsho/toggleterm.nvim',

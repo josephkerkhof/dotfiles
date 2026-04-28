@@ -120,6 +120,9 @@ vim.o.breakindent = true
 -- Enable undo/redo changes even after closing and reopening a file
 vim.o.undofile = true
 
+-- Keep sessions useful without restoring editor chrome that should stay ephemeral.
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal,localoptions'
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
