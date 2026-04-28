@@ -18,9 +18,6 @@ return {
         '~/Downloads',
         vim.fn.stdpath 'data' .. '/lazy/*',
       },
-      session_lens = {
-        picker = 'telescope',
-      },
     },
   },
   {
