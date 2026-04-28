@@ -661,6 +661,9 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'goimports',
+        'prettier',
+        'ruff',
         'stylua',
       })
 
@@ -704,10 +707,13 @@ require('lazy').setup({
         end
       end,
       formatters_by_ft = {
+        go = { 'goimports' },
+        html = { 'prettier' },
+        json = { 'prettier' },
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
+        python = { 'ruff_organize_imports', 'ruff_format' },
+        yaml = { 'prettier' },
+
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
