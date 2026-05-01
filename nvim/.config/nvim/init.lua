@@ -160,6 +160,12 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+vim.filetype.add {
+  pattern = {
+    ['.*%.blade%.php'] = 'blade',
+  },
+}
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -512,6 +518,7 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {},
+        intelephense = {}, -- PHP / Laravel
         pyright = {}, -- Python
         yamlls = {}, -- YAML
         -- rust_analyzer = {},
@@ -562,6 +569,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'goimports',
+        'pint',
         'prettier',
         'ruff',
         'stylua',
@@ -611,6 +619,7 @@ require('lazy').setup({
         html = { 'prettier' },
         json = { 'prettier' },
         lua = { 'stylua' },
+        php = { 'pint' },
         python = { 'ruff_organize_imports', 'ruff_format' },
         yaml = { 'prettier' },
 
@@ -803,7 +812,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'go', 'gomod', 'gosum', 'gowork', 'html', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'yaml' }
+      local parsers = { 'bash', 'blade', 'c', 'diff', 'go', 'gomod', 'gosum', 'gowork', 'html', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'php', 'phpdoc', 'query', 'vim', 'vimdoc', 'yaml' }
       require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
