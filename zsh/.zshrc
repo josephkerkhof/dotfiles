@@ -36,6 +36,7 @@ export EDITOR='nvim'
 
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.composer/vendor/bin:$PATH"
 
 # Herd
 export HERD_PHP_82_INI_SCAN_DIR="/Users/joseph/Library/Application Support/Herd/config/php/82/"
