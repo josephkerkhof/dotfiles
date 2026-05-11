@@ -13,7 +13,7 @@ setopt INC_APPEND_HISTORY
 
 # Vi mode
 bindkey -v
-export KEYTIMEOUT=1
+export KEYTIMEOUT=10
 
 # Change cursor shape for vi modes
 function zle-keymap-select {
@@ -69,6 +69,13 @@ eval "$(starship init zsh)"
 
 # Per-host overrides (untracked)
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+function _paste-from-normal-mode() {
+  zle vi-insert
+  zle .bracketed-paste
+}
+zle -N _paste-from-normal-mode
+bindkey -M vicmd '^[[200~' _paste-from-normal-mode
 
 # Syntax highlighting (must be last)
 for f in \
