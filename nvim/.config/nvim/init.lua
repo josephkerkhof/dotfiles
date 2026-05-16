@@ -235,6 +235,8 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
+        { '<leader>d', group = '[D]ebug' },
+        { '<leader>n', group = '[N]eotest' },
         { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },
     },
@@ -517,7 +519,40 @@ require('lazy').setup({
       ---@type table<string, vim.lsp.Config>
       local servers = {
         -- clangd = {},
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              usePlaceholders = true,
+              completeUnimported = true,
+              staticcheck = true,
+              semanticTokens = true,
+              codelenses = {
+                generate = true,
+                gc_details = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+              analyses = {
+                nilness = true,
+                shadow = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+              },
+            },
+          },
+        },
         intelephense = {}, -- PHP / Laravel
         pyright = {}, -- Python
         yamlls = {}, -- YAML
@@ -568,7 +603,11 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'delve',
         'goimports',
+        'gomodifytags',
+        'gotests',
+        'impl',
         'pint',
         'prettier',
         'ruff',
