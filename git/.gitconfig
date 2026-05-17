@@ -1,0 +1,19 @@
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[user]
+	name = Joseph Kerkhof
+	email = joseph@kerkhof.dev
+	signingkey = D7381EA0C0743DD9
+[core]
+	editor = nvim
+[commit]
+	gpgsign = true
+[gpg]
+	program = /opt/homebrew/bin/gpg
+[push]
+	autoSetupRemote = true
+[includeIf "gitdir:~/code/ae/"]
+	path = ~/.gitconfig-ae
