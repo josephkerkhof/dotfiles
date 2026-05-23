@@ -851,8 +851,35 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'blade', 'c', 'diff', 'go', 'gomod', 'gosum', 'gowork', 'html', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'php', 'phpdoc', 'query', 'vim', 'vimdoc', 'yaml' }
-      require('nvim-treesitter').install(parsers)
+      local parsers = {
+        'bash',
+        'blade',
+        'c',
+        'diff',
+        'go',
+        'gomod',
+        'gosum',
+        'gowork',
+        'html',
+        'json',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'php',
+        'phpdoc',
+        'query',
+        'vim',
+        'vimdoc',
+        'yaml',
+      }
+      require('nvim-treesitter.configs').setup {
+        modules = {},
+        ensure_installed = parsers,
+        sync_install = false,
+        auto_install = true,
+        ignore_install = {},
+      }
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
           local buf, filetype = args.buf, args.match
