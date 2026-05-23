@@ -6,7 +6,7 @@
 [user]
 	name = Joseph Kerkhof
 	email = joseph@kerkhof.dev
-	signingkey = D7381EA0C0743DD9
+	signingkey = 71A696CAC91CEA76
 [core]
 	editor = nvim
 [commit]
