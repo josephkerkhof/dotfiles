@@ -111,6 +111,14 @@
         "check": { "command": "clippy" },
       },
     },
+    // Go: staticcheck adds analysis beyond gopls defaults; usePlaceholders
+    // fills function-call argument stubs on completion.
+    "gopls": {
+      "initialization_options": {
+        "staticcheck": true,
+        "usePlaceholders": true,
+      },
+    },
     // intelephense premium key (optional — free tier is fully functional):
     // "intelephense": {
     //   "initialization_options": { "licenceKey": "..." }
