@@ -1,0 +1,119 @@
+// Zed settings — managed via GNU Stow (~/dotfiles/zed).
+//
+// Docs: https://zed.dev/docs/configuring-zed
+// Defaults: command palette -> "zed: open default settings"
+{
+  // ---- UI / editing ----
+  "vim_mode": true,
+  "base_keymap": "JetBrains",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "Ayu Light",
+    "dark": "Catppuccin Mocha", // provided by the `catppuccin` extension below
+  },
+  "vim": {
+    "toggle_relative_line_numbers": true,
+  },
+
+  // ---- git / diffs / session ----
+  "diff_view_style": "split",
+  "git_panel": {
+    "tree_view": false,
+  },
+  "session": {
+    "trust_all_worktrees": true,
+  },
+
+  // ---- agent servers (ACP) ----
+  "agent_servers": {
+    "opencode": {
+      "type": "registry",
+    },
+    "codex-acp": {
+      "type": "registry",
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "mode": "plan",
+        "model": "default",
+      },
+      "type": "registry",
+    },
+  },
+
+  // ---- declarative extensions ----
+  // Zed installs (true) / never installs (false) these on launch.
+  // This is the reproducible analog to nvim's lazy-lock.json.
+  "auto_install_extensions": {
+    "catppuccin": true, // dark theme referenced above
+    "php": true,
+    "blade": true, // Laravel Blade templating
+    "laravel": true, // Laravel dev tools LSP (routes, views, components)
+    "vue": true,
+    "html": true,
+    "env": true, // .env / dotenv syntax
+    "toml": true,
+    "sql": true,
+    "dockerfile": true,
+    "make": true,
+    "git-firefly": true, // inline git blame
+    "log": true,
+  },
+
+  // ---- save behavior (canonical formatter per language runs on save) ----
+  "format_on_save": "on",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "inlay_hints": {
+    "enabled": true,
+  },
+
+  // ---- per-language ----
+  "languages": {
+    // PHP: intelephense over the default phpactor.
+    // The php extension downloads intelephense on first use.
+    "PHP": {
+      "language_servers": ["intelephense", "!phpactor"],
+      // Laravel convention is Pint. To use it (needs ./vendor/bin/pint),
+      // swap the comment below; otherwise intelephense formats as PSR-12.
+      // "formatter": {
+      //   "external": {
+      //     "command": "./vendor/bin/pint",
+      //     "arguments": ["{buffer_path}"]
+      //   }
+      // }
+    },
+    // Python: format + organize imports with ruff (basedpyright stays as the
+    // primary analysis server; both are built in, no extension needed).
+    "Python": {
+      "formatter": {
+        "language_server": { "name": "ruff" },
+      },
+      "code_actions_on_format": {
+        "source.organizeImports.ruff": true,
+      },
+    },
+    // Go: gofmt on save (built in); add goimports-style import organization.
+    "Go": {
+      "code_actions_on_format": {
+        "source.organizeImports": true,
+      },
+    },
+  },
+
+  // ---- language server tweaks ----
+  "lsp": {
+    // Rust: lint with clippy instead of plain `cargo check`.
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": { "command": "clippy" },
+      },
+    },
+    // intelephense premium key (optional — free tier is fully functional):
+    // "intelephense": {
+    //   "initialization_options": { "licenceKey": "..." }
+    // }
+  },
+}
