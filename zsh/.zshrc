@@ -53,6 +53,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
   alias ar="herd php artisan"
   alias art="herd coverage ./vendor/bin/pest --parallel --coverage"
+  alias qa="herd composer qa"
 fi
 
 # Directory aliases
