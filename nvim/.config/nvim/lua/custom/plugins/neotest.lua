@@ -8,6 +8,7 @@ return {
     'antoinemadec/FixCursorHold.nvim',
     'nvim-treesitter/nvim-treesitter',
     'fredrikaverpil/neotest-golang',
+    'V13Axel/neotest-pest',
   },
   keys = {
     { '<leader>nt', function() require('neotest').run.run() end, desc = '[N]eotest nearest [T]est' },
@@ -25,6 +26,11 @@ return {
         require('neotest-golang') {
           dap_go_enabled = true,
         },
+        -- Pest runs from the project's own vendor/bin/pest, so version drift
+        -- between repos is a non-issue. Pest-style tests (the work repos) get
+        -- per-test granularity; class-based PHPUnit files (meal-planner) still
+        -- run through the pest binary, but only at file granularity.
+        require 'neotest-pest',
       },
     }
   end,

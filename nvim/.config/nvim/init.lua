@@ -608,6 +608,7 @@ require('lazy').setup({
         'gomodifytags',
         'gotests',
         'impl',
+        'php-debug-adapter',
         'pint',
         'prettier',
         'ruff',

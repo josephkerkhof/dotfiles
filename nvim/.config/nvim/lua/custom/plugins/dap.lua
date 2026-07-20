@@ -27,5 +27,26 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
     dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
     dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
+
+    -- PHP / Xdebug. The adapter (php-debug-adapter) is installed via Mason,
+    -- whose bin dir is prepended to Neovim's PATH, so the bare name resolves.
+    dap.adapters.php = {
+      type = 'executable',
+      command = 'php-debug-adapter',
+    }
+
+    -- Neovim listens; Xdebug connects to it on 9003. Start with <leader>dc,
+    -- then trigger a request/test with Xdebug enabled (see below).
+    dap.configurations.php = {
+      {
+        type = 'php',
+        request = 'launch',
+        name = 'Listen for Xdebug',
+        port = 9003,
+        -- Herd runs natively, so paths match 1:1 -- no pathMappings needed.
+        -- Under Docker/Sail you'd add:
+        --   pathMappings = { ['/var/www/html'] = '${workspaceFolder}' },
+      },
+    }
   end,
 }
