@@ -508,6 +508,7 @@ require('lazy').setup({
           --
           -- This may be unwanted, since they displace some of your code
           if client and client:supports_method('textDocument/inlayHint', event.buf) then
+            vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
             map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
           end
         end,
@@ -553,7 +554,6 @@ require('lazy').setup({
             },
           },
         },
-        intelephense = {}, -- PHP / Laravel
         pyright = {}, -- Python
         yamlls = {}, -- YAML
         -- rust_analyzer = {},
@@ -620,6 +620,15 @@ require('lazy').setup({
         vim.lsp.config(name, server)
         vim.lsp.enable(name)
       end
+
+      -- PHP: PHPantom, a fast Rust-based language server.
+      -- Not a Mason package -- install with `cargo install phpantom_lsp`.
+      vim.lsp.config('phpantom', {
+        cmd = { 'phpantom_lsp' },
+        filetypes = { 'php' },
+        root_markers = { 'composer.json', '.git' },
+      })
+      vim.lsp.enable 'phpantom'
     end,
   },
 
