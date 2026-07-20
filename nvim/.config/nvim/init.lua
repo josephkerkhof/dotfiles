@@ -873,13 +873,8 @@ require('lazy').setup({
         'vimdoc',
         'yaml',
       }
-      require('nvim-treesitter.configs').setup {
-        modules = {},
-        ensure_installed = parsers,
-        sync_install = false,
-        auto_install = true,
-        ignore_install = {},
-      }
+      require('nvim-treesitter').install(parsers)
+
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
           local buf, filetype = args.buf, args.match
@@ -887,8 +882,19 @@ require('lazy').setup({
           local language = vim.treesitter.language.get_lang(filetype)
           if not language then return end
 
-          -- check if parser exists and load it
-          if not vim.treesitter.language.add(language) then return end
+          -- auto-install a missing parser (replaces the old `auto_install`),
+          -- then load it once the async install lands
+          if not vim.treesitter.language.add(language) then
+            if vim.list_contains(require('nvim-treesitter').get_available(), language) then
+              require('nvim-treesitter').install(language):await(function(err)
+                if err or not vim.api.nvim_buf_is_valid(buf) then return end
+                if vim.treesitter.language.add(language) then
+                  vim.treesitter.start(buf, language)
+                end
+              end)
+            end
+            return
+          end
           -- enables syntax highlighting and other treesitter features
           vim.treesitter.start(buf, language)
 
