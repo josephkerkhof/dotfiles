@@ -54,6 +54,29 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias ar="herd php artisan"
   alias art="herd coverage ./vendor/bin/pest --parallel --coverage"
   alias qa="herd composer qa"
+
+  # Xdebug on-demand for Herd's FPM. Default is mode=off (~zero overhead);
+  # flip to debug only for a session, then flip back. Trigger a request with
+  # ?XDEBUG_SESSION=1 (or the Xdebug Helper browser extension).
+  #   xdebug        toggle
+  #   xdebug on     enable  + reload FPM
+  #   xdebug off    disable + reload FPM
+  xdebug() {
+    local dir="$HOME/Library/Application Support/Herd/config/php" want="$1" mode
+    if [[ -z "$want" ]]; then
+      grep -q '^xdebug.mode=debug' "$dir/85/php.ini" && want=off || want=on
+    fi
+    case "$want" in
+      on) mode=debug ;;
+      off) mode=off ;;
+      *) print -u2 "usage: xdebug [on|off]"; return 1 ;;
+    esac
+    for ini in "$dir"/8{4,5}/php.ini; do
+      sed -i '' "s/^xdebug\.mode=.*/xdebug.mode=$mode/" "$ini"
+    done
+    herd restart >/dev/null 2>&1
+    print "xdebug: $mode"
+  }
 fi
 
 # Directory aliases
