@@ -1,3 +1,30 @@
-font-family = Hack Nerd Font Mono
+font-family = Berkeley Mono
+font-style = Regular
+font-style-bold = Bold
+font-style-italic = Oblique
+font-style-bold-italic = Bold Oblique
 font-size = 14
-theme = TokyoNight Night
+
+# Islands Dark Jetbrains
+background = #1E1F22
+foreground = #BCBEC4
+cursor-color = #BCBEC4
+selection-background = #214283
+selection-foreground = #BCBEC4
+
+palette = 0=#000000
+palette = 1=#F0524F
+palette = 2=#5C962C
+palette = 3=#A68A0D
+palette = 4=#3993D4
+palette = 5=#A771BF
+palette = 6=#00A3A3
+palette = 7=#808080
+palette = 8=#595959
+palette = 9=#FF4050
+palette = 10=#4FC414
+palette = 11=#E5BF00
+palette = 12=#1FB0FF
+palette = 13=#ED7EED
+palette = 14=#00E5E5
+palette = 15=#FFFFFF
