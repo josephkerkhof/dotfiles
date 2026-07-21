@@ -823,20 +823,6 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      require('mini.files').setup()
-
-      vim.keymap.set('n', '-', function()
-        if vim.bo.filetype == 'minifiles' then
-          require('mini.files').go_out()
-          return
-        end
-
-        local current_file = vim.api.nvim_buf_get_name(0)
-        require('mini.files').open(current_file ~= '' and current_file or vim.uv.cwd())
-      end, { desc = 'Open file explorer at current file' })
-
-      vim.keymap.set('n', '<leader>e', function() require('mini.files').open(vim.uv.cwd()) end, { desc = 'Open file explorer at cwd' })
-
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
