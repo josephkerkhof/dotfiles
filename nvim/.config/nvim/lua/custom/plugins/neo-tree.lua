@@ -18,6 +18,11 @@ return {
     filesystem = {
       -- Track the active buffer, JetBrains autoscroll-from-source style.
       follow_current_file = { enabled = true },
+      -- Show dotfiles; keep .git itself out of the tree.
+      filtered_items = {
+        hide_dotfiles = false,
+        never_show = { '.git' },
+      },
       window = {
         mappings = {
           ['\\'] = 'close_window',
