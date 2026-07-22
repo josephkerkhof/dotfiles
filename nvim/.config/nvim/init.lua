@@ -567,12 +567,28 @@ require('lazy').setup({
         pyright = {}, -- Python
         yamlls = {}, -- YAML
         -- rust_analyzer = {},
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+
+        -- TypeScript + Vue: vue_ls (v3) handles .vue SFCs but delegates all
+        -- TypeScript work to vtsls, which loads the Vue plugin so type
+        -- checking reaches inside SFCs. nvim-lspconfig wires the two together.
+        vtsls = {
+          filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'vue' },
+          settings = {
+            vtsls = {
+              tsserver = {
+                globalPlugins = {
+                  {
+                    name = '@vue/typescript-plugin',
+                    location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
+                    languages = { 'vue' },
+                    configNamespace = 'typescript',
+                  },
+                },
+              },
+            },
+          },
+        },
+        vue_ls = {},
 
         -- Special Lua Config, as recommended by neovim help docs
         lua_ls = {
