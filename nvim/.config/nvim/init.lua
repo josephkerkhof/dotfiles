@@ -38,7 +38,7 @@ vim.o.breakindent = true
 vim.o.undofile = true
 
 -- Keep sessions useful without restoring editor chrome that should stay ephemeral.
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal,localoptions'
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,terminal'
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
