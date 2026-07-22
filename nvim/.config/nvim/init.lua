@@ -160,6 +160,12 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Disable soft wrap for markdown -- pipe tables shear when a row wraps',
+  pattern = 'markdown',
+  callback = function() vim.opt_local.wrap = false end,
+})
+
 vim.filetype.add {
   pattern = {
     ['.*%.blade%.php'] = 'blade',
