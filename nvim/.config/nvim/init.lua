@@ -469,6 +469,57 @@ require('lazy').setup({
       -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
       -- and elegantly composed help section, `:help lsp-vs-treesitter`
 
+      -- IntelliJ-style gutter indicators from LSP code lenses. PHPantom puts an
+      -- "↑ Parent::method" / "◆ Interface::method" lens on overriding methods;
+      -- the lens title's leading symbol becomes a sign on that line and `grs`
+      -- runs the lens under the cursor to jump to the overridden declaration.
+      -- Neovim's built-in code lens display renders virtual lines above the
+      -- code, so this places extmark signs from the raw lens data instead.
+      local lens_group = vim.api.nvim_create_augroup('kickstart-codelens', { clear = true })
+      local lens_ns = vim.api.nvim_create_namespace 'codelens-gutter'
+      local lens_state = {} ---@type table<integer, table<integer, { client_id: integer, command: lsp.Command }>>
+      local lens_tick = {}
+
+      local function lens_refresh(bufnr)
+        local clients = vim.lsp.get_clients { bufnr = bufnr, method = 'textDocument/codeLens' }
+        if #clients == 0 then return end
+        local remaining, collected = #clients, {}
+        for _, client in ipairs(clients) do
+          local params = { textDocument = vim.lsp.util.make_text_document_params(bufnr) }
+          client:request('textDocument/codeLens', params, function(err, result)
+            for _, lens in ipairs((not err and result) or {}) do
+              if lens.command then table.insert(collected, { client_id = client.id, lens = lens }) end
+            end
+            remaining = remaining - 1
+            if remaining > 0 or not vim.api.nvim_buf_is_valid(bufnr) then return end
+            vim.api.nvim_buf_clear_namespace(bufnr, lens_ns, 0, -1)
+            local by_extmark = {}
+            for _, item in ipairs(collected) do
+              -- Symbol prefixes (↑, ◆) pass through as the sign; lenses with
+              -- plain-text titles (gopls "run test" etc.) get a generic dot.
+              local sign = vim.fn.strcharpart(item.lens.command.title, 0, 1)
+              if sign:match '^%w' then sign = '•' end
+              local ok, id = pcall(vim.api.nvim_buf_set_extmark, bufnr, lens_ns, item.lens.range.start.line, 0, {
+                sign_text = sign,
+                sign_hl_group = 'LspCodeLens',
+              })
+              if ok then by_extmark[id] = { client_id = item.client_id, command = item.lens.command } end
+            end
+            lens_state[bufnr] = by_extmark
+          end, bufnr)
+        end
+      end
+
+      local function lens_run()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+        local mark = vim.api.nvim_buf_get_extmarks(bufnr, lens_ns, { row, 0 }, { row, -1 }, {})[1]
+        local lens = mark and (lens_state[bufnr] or {})[mark[1]]
+        if not lens then return vim.notify('No code lens on this line', vim.log.levels.INFO) end
+        local client = vim.lsp.get_client_by_id(lens.client_id)
+        if client then client:exec_cmd(lens.command, { bufnr = bufnr }) end
+      end
+
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
@@ -535,8 +586,76 @@ require('lazy').setup({
             vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
             map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
           end
+
+          -- Gutter indicators for overriding methods (see codelens-gutter above).
+          if client and client:supports_method('textDocument/codeLens', event.buf) then
+            lens_state[event.buf] = lens_state[event.buf] or {}
+            lens_refresh(event.buf)
+            map('grs', lens_run, '[G]oto [S]uper')
+          end
         end,
       })
+
+      -- Servers answer the initial code lens request before their background
+      -- index is ready and never push a codeLens/refresh afterwards, so the
+      -- lenses come back empty and stay empty until the buffer is edited.
+      -- Re-request them whenever a server finishes a unit of background work.
+      vim.api.nvim_create_autocmd('LspProgress', {
+        group = lens_group,
+        pattern = 'end',
+        callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if not client then return end
+          for bufnr in pairs(client.attached_buffers) do
+            if lens_state[bufnr] then lens_refresh(bufnr) end
+          end
+        end,
+      })
+
+      -- Debounced re-request after edits; the extmarks keep existing signs
+      -- glued to their lines in the meantime.
+      vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
+        group = lens_group,
+        callback = function(event)
+          if not lens_state[event.buf] then return end
+          local tick = (lens_tick[event.buf] or 0) + 1
+          lens_tick[event.buf] = tick
+          vim.defer_fn(function()
+            if lens_tick[event.buf] == tick and vim.api.nvim_buf_is_valid(event.buf) then lens_refresh(event.buf) end
+          end, 300)
+        end,
+      })
+
+      vim.api.nvim_create_autocmd('LspDetach', {
+        group = lens_group,
+        callback = function(event)
+          local others = vim.tbl_filter(
+            function(c) return c.id ~= event.data.client_id end,
+            vim.lsp.get_clients { bufnr = event.buf, method = 'textDocument/codeLens' }
+          )
+          if #others == 0 and lens_state[event.buf] then
+            lens_state[event.buf], lens_tick[event.buf] = nil, nil
+            if vim.api.nvim_buf_is_valid(event.buf) then vim.api.nvim_buf_clear_namespace(event.buf, lens_ns, 0, -1) end
+          end
+        end,
+      })
+
+      -- PHPantom's override lenses carry the client-side
+      -- editor.action.showReferences command, which Neovim has no default
+      -- handler for. Jump straight to a lone location, quickfix otherwise.
+      vim.lsp.commands['editor.action.showReferences'] = function(command, ctx)
+        local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+        local locations = command.arguments[3]
+        if #locations == 1 then
+          vim.lsp.util.show_document(locations[1], client.offset_encoding, { focus = true })
+        else
+          vim.fn.setqflist({}, ' ', {
+            title = command.title,
+            items = vim.lsp.util.locations_to_items(locations, client.offset_encoding),
+          })
+          vim.cmd.copen()
+        end
+      end
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
