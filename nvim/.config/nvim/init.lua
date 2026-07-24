@@ -113,6 +113,16 @@ vim.diagnostic.config {
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+local function copy_file_path(modifiers)
+  return function()
+    local path = vim.fn.expand('%' .. modifiers)
+    vim.fn.setreg('+', path)
+    vim.notify('Copied: ' .. path)
+  end
+end
+vim.keymap.set('n', '<leader>cfp', copy_file_path ':.', { desc = '[C]opy [F]ile [P]ath' })
+vim.keymap.set('n', '<leader>cfa', copy_file_path ':p', { desc = '[C]opy [F]ile [A]bsolute path' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -241,6 +251,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>c', group = '[C]opy' },
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
