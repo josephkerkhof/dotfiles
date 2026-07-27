@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": {
+    "php intelephense": {
+      "disabled": true
+    },
+    "phpantom": {
+      "extensions": [".php"],
+      "command": ["/opt/homebrew/opt/phpantom-lsp/bin/phpantom_lsp"]
+    }
+  }
+}
