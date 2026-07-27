@@ -8,5 +8,31 @@
       "extensions": [".php"],
       "command": ["/opt/homebrew/opt/phpantom-lsp/bin/phpantom_lsp"]
     }
+  },
+  "formatter": {
+    "gofmt": {
+      "command": ["/Users/joseph/.local/share/nvim/mason/bin/goimports", "-w", "$FILE"]
+    },
+    "prettier": {
+      "command": ["/Users/joseph/.local/share/nvim/mason/bin/prettier", "--write", "$FILE"]
+    },
+    "ruff": {
+      "disabled": true
+    },
+    "ruff-organize-imports": {
+      "command": ["/Users/joseph/.local/share/nvim/mason/bin/ruff", "check", "--select", "I", "--fix", "$FILE"],
+      "extensions": [".py", ".pyi"]
+    },
+    "ruff-format": {
+      "command": ["/Users/joseph/.local/share/nvim/mason/bin/ruff", "format", "$FILE"],
+      "extensions": [".py", ".pyi"]
+    },
+    "stylua": {
+      "command": ["/Users/joseph/.local/share/nvim/mason/bin/stylua", "$FILE"],
+      "extensions": [".lua"]
+    },
+    "clang-format": {
+      "disabled": true
+    }
   }
 }
