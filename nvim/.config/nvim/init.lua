@@ -793,7 +793,7 @@ require('lazy').setup({
       end
 
       -- PHP: PHPantom, a fast Rust-based language server.
-      -- Not a Mason package -- install with `cargo install phpantom_lsp`.
+      -- Not a Mason package -- install with `brew install phpantom-lsp`.
       vim.lsp.config('phpantom', {
         cmd = { 'phpantom_lsp' },
         filetypes = { 'php' },
