@@ -95,6 +95,9 @@ command -v starship >/dev/null && eval "$(starship init zsh)"
 # Per-host overrides (untracked)
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
+# Directory-specific environment variables
+eval "$(direnv hook zsh)"
+
 function _paste-from-normal-mode() {
   zle vi-insert
   zle .bracketed-paste
