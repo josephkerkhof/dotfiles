@@ -1,2 +1,2 @@
 export XDG_CONFIG_HOME="$HOME/.config"
-. "$HOME/.cargo/env"
+[ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

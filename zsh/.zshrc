@@ -37,6 +37,7 @@ export EDITOR='nvim'
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"
+export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
 # Herd (macOS only)
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -89,7 +90,7 @@ alias ae="cd ~/code/ae"
 [ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
 
 # Prompt
-eval "$(starship init zsh)"
+command -v starship >/dev/null && eval "$(starship init zsh)"
 
 # Per-host overrides (untracked)
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

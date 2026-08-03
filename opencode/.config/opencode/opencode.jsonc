@@ -2,37 +2,37 @@
   "$schema": "https://opencode.ai/config.json",
   "lsp": {
     "php intelephense": {
-      "disabled": true
+      "disabled": true,
     },
     "phpantom": {
       "extensions": [".php"],
-      "command": ["/opt/homebrew/opt/phpantom-lsp/bin/phpantom_lsp"]
-    }
+      "command": ["phpantom_lsp"],
+    },
   },
   "formatter": {
     "gofmt": {
-      "command": ["/Users/joseph/.local/share/nvim/mason/bin/goimports", "-w", "$FILE"]
+      "command": ["goimports", "-w", "$FILE"],
     },
     "prettier": {
-      "command": ["/Users/joseph/.local/share/nvim/mason/bin/prettier", "--write", "$FILE"]
+      "command": ["prettier", "--write", "$FILE"],
     },
     "ruff": {
-      "disabled": true
+      "disabled": true,
     },
     "ruff-organize-imports": {
-      "command": ["/Users/joseph/.local/share/nvim/mason/bin/ruff", "check", "--select", "I", "--fix", "$FILE"],
-      "extensions": [".py", ".pyi"]
+      "command": ["ruff", "check", "--select", "I", "--fix", "$FILE"],
+      "extensions": [".py", ".pyi"],
     },
     "ruff-format": {
-      "command": ["/Users/joseph/.local/share/nvim/mason/bin/ruff", "format", "$FILE"],
-      "extensions": [".py", ".pyi"]
+      "command": ["ruff", "format", "$FILE"],
+      "extensions": [".py", ".pyi"],
     },
     "stylua": {
-      "command": ["/Users/joseph/.local/share/nvim/mason/bin/stylua", "$FILE"],
-      "extensions": [".lua"]
+      "command": ["stylua", "$FILE"],
+      "extensions": [".lua"],
     },
     "clang-format": {
-      "disabled": true
-    }
-  }
+      "disabled": true,
+    },
+  },
 }
