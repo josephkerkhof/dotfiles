@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly auth_file="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/auth.json"
+readonly usage_url="https://chatgpt.com/backend-api/wham/usage"
+
+if [[ ! -r "$auth_file" ]]; then
+    printf 'OpenCode auth file is not readable: %s\n' "$auth_file" >&2
+    exit 1
+fi
+
+if ! access_token=$(jq -er '.openai.access | select(type == "string" and length > 0)' "$auth_file"); then
+    printf 'No OpenAI OAuth token found. Run /connect in OpenCode first.\n' >&2
+    exit 1
+fi
+
+account_id=$(jq -r '.openai.accountId // empty' "$auth_file")
+headers=(-H "Authorization: Bearer $access_token")
+
+if [[ -n "$account_id" ]]; then
+    headers+=(-H "ChatGPT-Account-Id: $account_id")
+fi
+
+curl --fail --silent --show-error "$usage_url" "${headers[@]}" | jq -r '
+    def window_name:
+        (.limit_window_seconds // 0) as $seconds
+        | if $seconds >= 604800 then "Weekly"
+          elif $seconds >= 86400 then "\($seconds / 86400 | floor)-day"
+          elif $seconds >= 3600 then "\($seconds / 3600 | floor)-hour"
+          else "Primary"
+          end;
+
+    def duration:
+        (. // 0 | floor) as $seconds
+        | [
+            if $seconds >= 86400 then "\($seconds / 86400 | floor)d" else empty end,
+            if $seconds >= 3600 then "\(($seconds % 86400) / 3600 | floor)h" else empty end,
+            if $seconds >= 60 then "\(($seconds % 3600) / 60 | floor)m" else empty end
+          ]
+        | if length == 0 then "<1m" else join(" ") end;
+
+    def usage_line:
+        "\(window_name): \(100 - (.used_percent // 0) | if . < 0 then 0 else . end)% remaining (resets in \(.reset_after_seconds | duration))";
+
+    "Plan: \(.plan_type // "unknown")",
+    (.rate_limit.primary_window | select(. != null) | usage_line),
+    (.rate_limit.secondary_window | select(. != null) | usage_line),
+    if .credits.unlimited then "Credits: unlimited"
+    elif (.credits.balance // 0) > 0 then "Credits: \(.credits.balance)"
+    else empty
+    end
+'
