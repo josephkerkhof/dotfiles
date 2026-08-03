@@ -25,6 +25,32 @@ stow nvim
 
 This creates a symlink from `~/.config/nvim` to `~/dotfiles/nvim/.config/nvim`.
 
+### Git identity
+
+The Git package intentionally excludes identities from the repository. After
+stowing it, create `~/.gitconfig.local` on each host:
+
+```gitconfig
+[user]
+	name = Your Name
+	email = you@example.com
+	signingkey = YOUR_SIGNING_KEY
+[commit]
+	gpgsign = true
+```
+
+Repositories under `~/code/ae/` additionally load `~/.gitconfig-ae.local`,
+which can override the email and signing key:
+
+```gitconfig
+[user]
+	email = you@work.example
+	signingkey = YOUR_WORK_SIGNING_KEY
+```
+
+Omit the signing key and `commit.gpgsign` on hosts that do not have a signing
+key. Git will refuse to commit without an explicitly configured identity.
+
 To stow multiple packages at once:
 
 ```sh
