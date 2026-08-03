@@ -3,15 +3,13 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[user]
-	name = Joseph Kerkhof
-	email = joseph@kerkhof.dev
-	signingkey = 71A696CAC91CEA76
 [core]
 	editor = nvim
-[commit]
-	gpgsign = true
 [push]
 	autoSetupRemote = true
+[user]
+	useConfigOnly = true
+[include]
+	path = ~/.gitconfig.local
 [includeIf "gitdir:~/code/ae/"]
-	path = ~/.gitconfig-ae
+	path = ~/.gitconfig-ae.local
