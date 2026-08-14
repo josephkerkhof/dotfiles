@@ -53,7 +53,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias ci="herd composer install"
   alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
   alias ar="herd php artisan"
-  alias art="herd coverage ./vendor/bin/pest --parallel --coverage"
+  alias art="herd coverage ./vendor/bin/pest --parallel --processes=6 --coverage"
   alias qa="herd composer qa"
 
   # Xdebug on-demand for Herd's FPM. Default is mode=off (~zero overhead);
