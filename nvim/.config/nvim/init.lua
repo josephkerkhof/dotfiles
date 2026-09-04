@@ -779,6 +779,7 @@ require('lazy').setup({
         'gomodifytags',
         'gotests',
         'impl',
+        'js-debug-adapter',
         'php-debug-adapter',
         'pint',
         'prettier',
@@ -1055,9 +1056,7 @@ require('lazy').setup({
             if vim.list_contains(require('nvim-treesitter').get_available(), language) then
               require('nvim-treesitter').install(language):await(function(err)
                 if err or not vim.api.nvim_buf_is_valid(buf) then return end
-                if vim.treesitter.language.add(language) then
-                  vim.treesitter.start(buf, language)
-                end
+                if vim.treesitter.language.add(language) then vim.treesitter.start(buf, language) end
               end)
             end
             return

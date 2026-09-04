@@ -35,6 +35,7 @@ bindkey '^e' edit-command-line
 export EDITOR='nvim'
 
 # PATH
+export PATH="$HOME/Library/TinyTeX/bin/universal-darwin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
@@ -53,7 +54,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias ci="herd composer install"
   alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
   alias ar="herd php artisan"
-  alias art="herd coverage ./vendor/bin/pest --parallel --processes=6 --coverage"
+  alias art="herd coverage ./vendor/bin/pest --parallel --processes=6 --tia"
   alias qa="herd composer qa"
 
   # Xdebug on-demand for Herd's FPM. Default is mode=off (~zero overhead);
@@ -112,3 +113,6 @@ for f in \
   [ -r "$f" ] && source "$f" && break
 done
 unset f
+
+# bun completions
+[ -s "/Users/joseph/.bun/_bun" ] && source "/Users/joseph/.bun/_bun"

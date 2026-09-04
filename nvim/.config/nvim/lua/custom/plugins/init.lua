@@ -12,6 +12,7 @@ return {
     opts = {
       auto_save = true,
       auto_restore = true,
+      close_filetypes_on_save = { 'checkhealth', 'neo-tree' },
       cwd_change_handling = false,
       suppressed_dirs = {
         '/',

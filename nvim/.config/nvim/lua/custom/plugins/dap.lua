@@ -28,6 +28,39 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
     dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
 
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'js-debug-adapter',
+        args = { '${port}' },
+      },
+    }
+
+    dap.configurations.typescript = {
+      {
+        type = 'pwa-node',
+        request = 'launch',
+        name = 'Launch current file',
+        program = '${file}',
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+        console = 'integratedTerminal',
+        skipFiles = { '<node_internals>/**', '**/node_modules/**' },
+      },
+      {
+        type = 'pwa-node',
+        request = 'attach',
+        name = 'Attach to port 9229',
+        port = 9229,
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+        skipFiles = { '<node_internals>/**', '**/node_modules/**' },
+      },
+    }
+    dap.configurations.typescriptreact = dap.configurations.typescript
+
     -- PHP / Xdebug. The adapter (php-debug-adapter) is installed via Mason,
     -- whose bin dir is prepended to Neovim's PATH, so the bare name resolves.
     dap.adapters.php = {
