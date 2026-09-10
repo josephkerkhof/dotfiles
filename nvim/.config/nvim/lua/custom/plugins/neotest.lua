@@ -1,31 +1,18 @@
----@module 'lazy'
----@type LazySpec
-return {
-  'nvim-neotest/neotest',
-  dependencies = {
-    'nvim-neotest/nvim-nio',
-    'nvim-lua/plenary.nvim',
-    'antoinemadec/FixCursorHold.nvim',
-    'nvim-treesitter/nvim-treesitter',
-    'fredrikaverpil/neotest-golang',
+local neotest = require 'neotest'
+
+neotest.setup {
+  adapters = {
+    require 'neotest-golang' {
+      dap_go_enabled = true,
+    },
   },
-  keys = {
-    { '<leader>nt', function() require('neotest').run.run() end, desc = '[N]eotest nearest [T]est' },
-    { '<leader>nf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = '[N]eotest [F]ile' },
-    { '<leader>na', function() require('neotest').run.run(vim.uv.cwd()) end, desc = '[N]eotest [A]ll' },
-    { '<leader>ns', function() require('neotest').summary.toggle() end, desc = '[N]eotest [S]ummary' },
-    { '<leader>no', function() require('neotest').output.open { enter = true } end, desc = '[N]eotest [O]utput' },
-    { '<leader>np', function() require('neotest').output_panel.toggle() end, desc = '[N]eotest output [P]anel' },
-    { '<leader>nd', function() require('neotest').run.run { strategy = 'dap' } end, desc = '[N]eotest [D]ebug nearest' },
-    { '<leader>nx', function() require('neotest').run.stop() end, desc = '[N]eotest stop' },
-  },
-  config = function()
-    require('neotest').setup {
-      adapters = {
-        require('neotest-golang') {
-          dap_go_enabled = true,
-        },
-      },
-    }
-  end,
 }
+
+vim.keymap.set('n', '<leader>nt', function() neotest.run.run() end, { desc = '[N]eotest nearest [T]est' })
+vim.keymap.set('n', '<leader>nf', function() neotest.run.run(vim.fn.expand '%') end, { desc = '[N]eotest [F]ile' })
+vim.keymap.set('n', '<leader>na', function() neotest.run.run(vim.uv.cwd()) end, { desc = '[N]eotest [A]ll' })
+vim.keymap.set('n', '<leader>ns', neotest.summary.toggle, { desc = '[N]eotest [S]ummary' })
+vim.keymap.set('n', '<leader>no', function() neotest.output.open { enter = true } end, { desc = '[N]eotest [O]utput' })
+vim.keymap.set('n', '<leader>np', neotest.output_panel.toggle, { desc = '[N]eotest output [P]anel' })
+vim.keymap.set('n', '<leader>nd', function() neotest.run.run { strategy = 'dap' } end, { desc = '[N]eotest [D]ebug nearest' })
+vim.keymap.set('n', '<leader>nx', neotest.run.stop, { desc = '[N]eotest stop' })

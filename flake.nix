@@ -45,6 +45,11 @@
     darwinConfigurations.personal = mkDarwin ./hosts/personal;
     darwinConfigurations.work = mkDarwin ./hosts/work;
 
+    packages.aarch64-darwin.neovim = import ./packages/neovim.nix {
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+    };
+
+    checks.aarch64-darwin.neovim = self.packages.aarch64-darwin.neovim;
     checks.aarch64-darwin.personal = self.darwinConfigurations.personal.system;
     checks.aarch64-darwin.work = self.darwinConfigurations.work.system;
     formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;

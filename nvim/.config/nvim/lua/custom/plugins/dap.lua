@@ -1,85 +1,72 @@
----@module 'lazy'
----@type LazySpec
-return {
-  'mfussenegger/nvim-dap',
-  dependencies = {
-    'nvim-neotest/nvim-nio',
-    { 'rcarriga/nvim-dap-ui', opts = {} },
-    { 'theHamsta/nvim-dap-virtual-text', opts = {} },
-    { 'leoluz/nvim-dap-go', opts = {} },
+local dap = require 'dap'
+local dapui = require 'dapui'
+
+dapui.setup {}
+require('nvim-dap-virtual-text').setup {}
+require('dap-go').setup {}
+
+vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = '[D]ebug [B]reakpoint' })
+vim.keymap.set('n', '<leader>dB', function() dap.set_breakpoint(vim.fn.input 'Condition: ') end, { desc = '[D]ebug Conditional [B]reakpoint' })
+vim.keymap.set('n', '<leader>dc', dap.continue, { desc = '[D]ebug [C]ontinue' })
+vim.keymap.set('n', '<leader>di', dap.step_into, { desc = '[D]ebug step [I]nto' })
+vim.keymap.set('n', '<leader>do', dap.step_over, { desc = '[D]ebug step [O]ver' })
+vim.keymap.set('n', '<leader>dO', dap.step_out, { desc = '[D]ebug step [O]ut' })
+vim.keymap.set('n', '<leader>dr', dap.repl.open, { desc = '[D]ebug [R]epl' })
+vim.keymap.set('n', '<leader>dl', dap.run_last, { desc = '[D]ebug run [L]ast' })
+vim.keymap.set('n', '<leader>du', dapui.toggle, { desc = '[D]ebug [U]I toggle' })
+vim.keymap.set('n', '<leader>dt', function() require('dap-go').debug_test() end, { desc = '[D]ebug nearest go [T]est' })
+
+dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
+dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
+dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
+
+dap.adapters['pwa-node'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  executable = {
+    command = 'js-debug',
+    args = { '${port}' },
   },
-  keys = {
-    { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = '[D]ebug [B]reakpoint' },
-    { '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input 'Condition: ') end, desc = '[D]ebug Conditional [B]reakpoint' },
-    { '<leader>dc', function() require('dap').continue() end, desc = '[D]ebug [C]ontinue' },
-    { '<leader>di', function() require('dap').step_into() end, desc = '[D]ebug step [I]nto' },
-    { '<leader>do', function() require('dap').step_over() end, desc = '[D]ebug step [O]ver' },
-    { '<leader>dO', function() require('dap').step_out() end, desc = '[D]ebug step [O]ut' },
-    { '<leader>dr', function() require('dap').repl.open() end, desc = '[D]ebug [R]epl' },
-    { '<leader>dl', function() require('dap').run_last() end, desc = '[D]ebug run [L]ast' },
-    { '<leader>du', function() require('dapui').toggle() end, desc = '[D]ebug [U]I toggle' },
-    { '<leader>dt', function() require('dap-go').debug_test() end, desc = '[D]ebug nearest go [T]est' },
+}
+
+dap.configurations.typescript = {
+  {
+    type = 'pwa-node',
+    request = 'launch',
+    name = 'Launch current file',
+    program = '${file}',
+    cwd = '${workspaceFolder}',
+    sourceMaps = true,
+    console = 'integratedTerminal',
+    skipFiles = { '<node_internals>/**', '**/node_modules/**' },
   },
-  config = function()
-    local dap = require 'dap'
-    local dapui = require 'dapui'
+  {
+    type = 'pwa-node',
+    request = 'attach',
+    name = 'Attach to port 9229',
+    port = 9229,
+    cwd = '${workspaceFolder}',
+    sourceMaps = true,
+    skipFiles = { '<node_internals>/**', '**/node_modules/**' },
+  },
+}
+dap.configurations.typescriptreact = dap.configurations.typescript
 
-    dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
-    dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
-    dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
+dap.adapters.php = {
+  type = 'executable',
+  command = 'php-debug-adapter',
+}
 
-    dap.adapters['pwa-node'] = {
-      type = 'server',
-      host = 'localhost',
-      port = '${port}',
-      executable = {
-        command = 'js-debug-adapter',
-        args = { '${port}' },
-      },
-    }
-
-    dap.configurations.typescript = {
-      {
-        type = 'pwa-node',
-        request = 'launch',
-        name = 'Launch current file',
-        program = '${file}',
-        cwd = '${workspaceFolder}',
-        sourceMaps = true,
-        console = 'integratedTerminal',
-        skipFiles = { '<node_internals>/**', '**/node_modules/**' },
-      },
-      {
-        type = 'pwa-node',
-        request = 'attach',
-        name = 'Attach to port 9229',
-        port = 9229,
-        cwd = '${workspaceFolder}',
-        sourceMaps = true,
-        skipFiles = { '<node_internals>/**', '**/node_modules/**' },
-      },
-    }
-    dap.configurations.typescriptreact = dap.configurations.typescript
-
-    -- PHP / Xdebug. The adapter (php-debug-adapter) is installed via Mason,
-    -- whose bin dir is prepended to Neovim's PATH, so the bare name resolves.
-    dap.adapters.php = {
-      type = 'executable',
-      command = 'php-debug-adapter',
-    }
-
-    -- Neovim listens; Xdebug connects to it on 9003. Start with <leader>dc,
-    -- then trigger a request/test with Xdebug enabled (see below).
-    dap.configurations.php = {
-      {
-        type = 'php',
-        request = 'launch',
-        name = 'Listen for Xdebug',
-        port = 9003,
-        -- Herd runs natively, so paths match 1:1 -- no pathMappings needed.
-        -- Under Docker/Sail you'd add:
-        --   pathMappings = { ['/var/www/html'] = '${workspaceFolder}' },
-      },
-    }
-  end,
+-- Neovim listens; Xdebug connects to it on 9003. Start with <leader>dc,
+-- then trigger a request/test with Xdebug enabled.
+dap.configurations.php = {
+  {
+    type = 'php',
+    request = 'launch',
+    name = 'Listen for Xdebug',
+    port = 9003,
+    -- Herd runs natively, so paths match 1:1. Under Docker/Sail, add
+    -- pathMappings = { ['/var/www/html'] = '${workspaceFolder}' }.
+  },
 }

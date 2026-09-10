@@ -2,6 +2,7 @@
   imports = [
     ./config-files.nix
     ./git.nix
+    ./neovim.nix
     ./packages.nix
     ./shell.nix
   ];
