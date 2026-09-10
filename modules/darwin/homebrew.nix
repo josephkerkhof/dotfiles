@@ -2,6 +2,9 @@
   nix-homebrew = {
     enable = true;
     enableRosetta = false;
+    enableBashIntegration = false;
+    enableFishIntegration = false;
+    enableZshIntegration = false;
     user = username;
 
     # Adopt the existing /opt/homebrew installation during canary cutover.
@@ -11,7 +14,7 @@
 
   homebrew = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
 
     casks = [
       "bruno"

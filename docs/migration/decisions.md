@@ -19,6 +19,9 @@ deferred until the personal configuration is stable.
 - Mac App Store: declare GarageBand, iMovie, Keynote, Numbers, Pages, Pixelmator
   Pro, and Wipr by App Store ID. Retain Homebrew `mas` as the sole formula leaf
   needed for App Store ownership.
+- Homebrew shell integration: disable Bash, Fish, and Zsh integration. Homebrew
+  owns GUI applications only and must not prepend `/opt/homebrew/bin` ahead of
+  Nix-owned commands.
 - Application leftovers: remove the stale `/Applications/X-Plane` alias and
   `/Applications/Output` support directory during cutover.
 - Terraform: remove during cutover without replacing it with OpenTofu. Remove
