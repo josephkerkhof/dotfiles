@@ -27,13 +27,11 @@ GNU Stow currently links these paths into the repository:
 state. Home Manager must manage the tracked OpenCode files individually rather
 than replace that directory.
 
-Host-local identity and secret files remain outside the repository:
-
-- `~/.gitconfig.local`
-- `~/.gitconfig-ae.local`
-- `~/.secrets`
-- `~/.zshrc.local`
-- `~/.local/share/opencode/auth.json`
+The OpenCode credential database remains host-local under
+`~/.local/share/opencode`. The target shell reserves `~/.secrets` as an optional
+host-local secret boundary, but that file is currently absent. The former
+`~/.gitconfig.local`, `~/.gitconfig-ae.local`, and `~/.zshrc.local` override
+files are also absent and are not retained by the target configuration.
 
 ## Mutable Tool Owners
 
@@ -41,14 +39,15 @@ Host-local identity and secret files remain outside the repository:
 - Lazy owns Neovim plugins.
 - Mason owns Neovim language servers, formatters, and debug adapters.
 - Runtime Treesitter installation owns Neovim parsers.
-- Herd owns PHP 8.2 through 8.5, its NVM integration, local routing, TLS, and
-  mutable Xdebug configuration.
-- Cargo, Bun, Composer, and TinyTeX contribute additional user-local tools.
+- Herd was present during the initial inventory but has since been removed,
+  along with its PHP, Composer, NVM, routing, TLS, and Xdebug state.
+- Rustup and stale Bun installer state remain installed. Global Composer and
+  TinyTeX are absent.
 
-These owners remain in place while the Nix closure is built and tested. The
-canary cutover must remove Stow links and duplicate workstation tool owners as a
-single coordinated operation. Herd and project data are explicitly excluded
-from that cleanup phase.
+The remaining owners stay in place while the Nix closure is built and tested.
+The canary cutover must remove Stow links and duplicate workstation tool owners
+as a single coordinated operation. Project runtimes will be added later through
+devenv rather than preserving Herd.
 
 ## Homebrew State
 
@@ -67,6 +66,21 @@ Current services:
 The initial nix-darwin Homebrew policy uses `cleanup = "none"`. No undeclared
 formula, cask, tap, service, or data directory may be removed during initial
 activation.
+
+## Target GUI Ownership
+
+- Existing Homebrew casks retained by the shared profile: Bruno, Caffeine,
+  Codex, Hack Nerd Font, Ghostty, ngrok, and VLC.
+- Existing app bundles to be adopted as personal Homebrew casks: balenaEtcher,
+  Discord, Logos, MakeMKV, Raspberry Pi Imager, Signal, Steam, and Telegram.
+- App Store applications declared by ID: GarageBand, iMovie, Keynote, Numbers,
+  Pages, Pixelmator Pro, and Wipr.
+- App bundles to be removed while preserving user data: IntelliJ IDEA, Sparrow,
+  and Zoom.
+- Stale application leftovers to be removed: `/Applications/X-Plane` and
+  `/Applications/Output`.
+- Steam remains the mutable owner of game installations and launchers under
+  `~/Applications`.
 
 ## Pre-Cutover Neovim
 

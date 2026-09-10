@@ -1,73 +1,46 @@
 # dotfiles
 
-Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/) and [git subtree](https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging#_subtree_merge).
+Declarative macOS workstation configuration built with nix-darwin, Home
+Manager, and Determinate Nix. Nix owns command-line tools and configuration;
+nix-darwin uses Homebrew only for GUI applications and `mas` for App Store
+applications.
 
-## Setup
+## Hosts
 
-### Prerequisites
+- `personal`: primary Apple Silicon personal Mac profile.
+- `work`: scaffold only; inventory and activation are deferred until the
+  personal canary is stable.
 
-- git
-- [GNU Stow](https://www.gnu.org/software/stow/): `brew install stow`
-- [Neovim](https://neovim.io/) (>= 0.10)
+Project runtimes and services belong in project `devenv.sh` environments rather
+than the workstation profile.
 
-### Installation
+## Fresh Personal Mac
+
+1. Install the Xcode Command Line Tools and Determinate Nix.
+2. Sign into the App Store, restore the host-local GPG signing key, and configure
+   SSH access to GitHub, including the private `nix-private-assets` repository.
+3. Clone this repository at `~/dotfiles` and build the personal system:
 
 ```sh
 git clone git@github.com:josephkerkhof/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+/nix/var/nix/profiles/default/bin/nix flake check path:.
+/nix/var/nix/profiles/default/bin/nix build path:.#darwinConfigurations.personal.system --out-link result-personal
+system_path=$(readlink result-personal)
+sudo /nix/var/nix/profiles/default/bin/nix-env --profile /nix/var/nix/profiles/system --set "$system_path"
+sudo "$system_path/activate"
 ```
 
-Remove any existing configs that would conflict (e.g., `~/.config/nvim`), then stow the packages you want:
-
-```sh
-stow nvim
-```
-
-This creates a symlink from `~/.config/nvim` to `~/dotfiles/nvim/.config/nvim`.
-
-### Git identity
-
-The Git package intentionally excludes identities from the repository. After
-stowing it, create `~/.gitconfig.local` on each host:
-
-```gitconfig
-[user]
-	name = Your Name
-	email = you@example.com
-	signingkey = YOUR_SIGNING_KEY
-[commit]
-	gpgsign = true
-```
-
-Repositories under `~/code/ae/` additionally load `~/.gitconfig-ae.local`,
-which can override the email and signing key:
-
-```gitconfig
-[user]
-	email = you@work.example
-	signingkey = YOUR_WORK_SIGNING_KEY
-```
-
-Omit the signing key and `commit.gpgsign` on hosts that do not have a signing
-key. Git will refuse to commit without an explicitly configured identity.
-
-To stow multiple packages at once:
-
-```sh
-stow nvim zsh tmux
-```
-
-### Unstowing
-
-To remove the symlinks for a package:
-
-```sh
-stow -D nvim
-```
+The existing personal Mac has a stricter one-time migration procedure in
+[`docs/migration/personal-cutover.md`](docs/migration/personal-cutover.md).
 
 ## Syncing Neovim with upstream kickstart.nvim
 
-The Neovim config is based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), added via `git subtree`. Custom configuration lives in `lua/custom/plugins/` to minimize merge conflicts.
+The Neovim config is based on
+[kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), added through a
+Git subtree. Custom configuration lives in `lua/custom/plugins/` to minimize
+merge conflicts. Plugins, parsers, language servers, formatters, and debug
+adapters are packaged by Nix rather than installed at runtime.
 
 ### Pull latest upstream changes
 

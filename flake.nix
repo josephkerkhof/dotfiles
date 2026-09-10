@@ -54,9 +54,11 @@
       pkgs = nixpkgs.legacyPackages.aarch64-darwin;
     };
 
-    checks.aarch64-darwin.neovim = self.packages.aarch64-darwin.neovim;
-    checks.aarch64-darwin.personal = self.darwinConfigurations.personal.system;
-    checks.aarch64-darwin.work = self.darwinConfigurations.work.system;
+    checks.aarch64-darwin = {
+      neovim = self.packages.aarch64-darwin.neovim;
+      personal = self.darwinConfigurations.personal.system;
+      work = self.darwinConfigurations.work.system;
+    };
     formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
   };
 }

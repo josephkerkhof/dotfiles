@@ -55,6 +55,10 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 vim.o.foldlevel = 99
 
+local spell_state = vim.fn.stdpath 'state' .. '/spell'
+vim.fn.mkdir(spell_state, 'p')
+vim.opt.spellfile = spell_state .. '/en.utf-8.add'
+
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 vim.diagnostic.config {

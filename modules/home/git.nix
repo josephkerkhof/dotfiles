@@ -1,4 +1,12 @@
-{
+{pkgs, ...}: {
+  programs.gpg.enable = true;
+
+  services.gpg-agent = {
+    enable = true;
+    enableZshIntegration = true;
+    pinentry.package = pkgs.pinentry_mac;
+  };
+
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -8,13 +16,5 @@
       push.autoSetupRemote = true;
       user.useConfigOnly = true;
     };
-
-    includes = [
-      {path = "~/.gitconfig.local";}
-      {
-        condition = "gitdir:~/code/ae/";
-        path = "~/.gitconfig-ae.local";
-      }
-    ];
   };
 }

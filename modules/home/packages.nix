@@ -6,7 +6,6 @@
     doctl
     fastfetch
     ffmpeg
-    gemini-cli
     git-lfs
     glow
     go
@@ -22,7 +21,6 @@
     kubernetes-helm
     opencode
     osv-scanner
-    pinentry_mac
     pkgs."poppler-utils"
     prettier
     pkgs."phpantom-lsp"
