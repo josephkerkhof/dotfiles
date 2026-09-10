@@ -45,3 +45,23 @@ deferred until the personal configuration is stable.
 - TeX: remove the nonexistent TinyTeX PATH entry and uninstall the global
   `mactex-no-gui` cask during cutover. TeX distributions belong to project
   devenv environments.
+
+## macOS Defaults
+
+- Dock: preserve auto-hide, 48 px tiles, grouped App Expose windows, and the
+  top-left Mission Control hot corner. Leave pinned applications and directory
+  stacks unmanaged.
+- Finder: preserve list view as the default, show external and removable disks
+  on the desktop, and hide the internal disk. Leave hidden files, extensions,
+  path/status bars, sidebars, and window state unmanaged.
+- Keyboard: preserve `InitialKeyRepeat=15` and `KeyRepeat=2`, disable
+  press-and-hold, and disable automatic capitalization, spelling correction,
+  smart quotes/dashes, and double-space periods.
+- Trackpad: preserve tap-to-click, two-finger secondary click, and three-finger
+  drag. Leave sensitivity and other gestures unmanaged.
+- Screenshots: save PNG files under `~/Pictures/Screenshots`, retain the preview
+  thumbnail, and disable window shadows. Home Manager creates the destination.
+- Security: enable Touch ID and Apple Watch authentication for `sudo`, with the
+  normal password fallback. Enable the macOS application firewall while allowing
+  signed applications; do not enable stealth or block-all mode. Keep FileVault
+  manually managed; it is currently on.

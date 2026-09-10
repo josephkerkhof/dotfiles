@@ -3,6 +3,8 @@
   pkgs,
   ...
 }: {
+  imports = [../../modules/darwin/defaults.nix];
+
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   networking.hostName = "Josephs-MacBook-Pro";
