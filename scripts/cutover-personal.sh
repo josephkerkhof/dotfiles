@@ -25,7 +25,7 @@ cd "$repo"
 [[ -z $(git status --porcelain) ]] || fail "the Git worktree is not clean"
 [[ -x $NIX_BIN && -x $NIX_ENV ]] || fail "Determinate Nix is unavailable"
 
-expected_brew_leaves=$(printf '%s\n' \
+expected_brew_roots=$(printf '%s\n' \
   act \
   age \
   blueutil \
@@ -40,6 +40,7 @@ expected_brew_leaves=$(printf '%s\n' \
   gh \
   git-lfs \
   glow \
+  gnupg \
   go \
   golang-migrate \
   hashicorp/tap/terraform \
@@ -53,10 +54,12 @@ expected_brew_leaves=$(printf '%s\n' \
   libpq \
   mysql@8.4 \
   neovim \
+  node \
   node@22 \
   opencode \
   osv-scanner \
   pandoc \
+  pcre2 \
   phpantom-lsp \
   pinentry-mac \
   pnpm \
@@ -74,9 +77,11 @@ expected_brew_leaves=$(printf '%s\n' \
   yt-dlp \
   zsh-syntax-highlighting)
 
-[[ $(brew leaves) == "$expected_brew_leaves" ]] || {
-  printf 'Homebrew leaves changed since review. Expected:\n%s\n\nActual:\n%s\n' \
-    "$expected_brew_leaves" "$(brew leaves)" >&2
+brew_roots=$(brew info --installed --json=v2 | jq -r \
+  '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
+[[ $brew_roots == "$expected_brew_roots" ]] || {
+  printf 'Homebrew requested formulae changed since review. Expected:\n%s\n\nActual:\n%s\n' \
+    "$expected_brew_roots" "$brew_roots" >&2
   exit 1
 }
 
@@ -127,6 +132,7 @@ read -r confirmation
 mkdir -p "$HOME/.local/state/nix-cutover"
 git rev-parse HEAD >"$HOME/.local/state/nix-cutover/git-revision.before"
 brew leaves >"$HOME/.local/state/nix-cutover/brew-leaves.before"
+printf '%s\n' "$brew_roots" >"$HOME/.local/state/nix-cutover/brew-roots.before"
 brew list --cask >"$HOME/.local/state/nix-cutover/brew-casks.before"
 
 "$NIX_BIN" flake check path:. --print-build-logs
@@ -190,7 +196,7 @@ brew services stop temporal >/dev/null 2>&1 || true
 formulae=()
 while IFS= read -r formula; do
   [[ -n $formula ]] && formulae+=("$formula")
-done <<<"$expected_brew_leaves"
+done <<<"$expected_brew_roots"
 brew uninstall --formula "${formulae[@]}"
 brew uninstall --cask font-hack mactex-no-gui
 brew autoremove
