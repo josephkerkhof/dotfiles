@@ -23,6 +23,14 @@ Run the script as the normal user, not through `sudo`:
 ./scripts/cutover-personal.sh --execute
 ```
 
+If initial activation stops after removing Stow links, correct the activation
+blocker, activate `result-personal` directly, and resume at validation and
+cleanup with:
+
+```sh
+./scripts/cutover-personal.sh --resume-cleanup
+```
+
 The script performs these stages:
 
 1. Verify the host, branch, clean worktree, Stow links, reviewed Homebrew state,

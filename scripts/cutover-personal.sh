@@ -12,7 +12,11 @@ fail() {
   exit 1
 }
 
-[[ ${1:-} == "--execute" ]] || fail "run with --execute after reviewing this script"
+case ${1:-} in
+  --execute) readonly MODE="execute" ;;
+  --resume-cleanup) readonly MODE="resume-cleanup" ;;
+  *) fail "run with --execute or --resume-cleanup after reviewing this script" ;;
+esac
 [[ $EUID -ne 0 ]] || fail "run as the normal user; the script requests sudo when needed"
 
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -77,98 +81,135 @@ expected_brew_roots=$(printf '%s\n' \
   yt-dlp \
   zsh-syntax-highlighting)
 
-brew_roots=$(brew info --installed --json=v2 | jq -r \
-  '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
-[[ $brew_roots == "$expected_brew_roots" ]] || {
-  printf 'Homebrew requested formulae changed since review. Expected:\n%s\n\nActual:\n%s\n' \
-    "$expected_brew_roots" "$brew_roots" >&2
-  exit 1
-}
+if [[ $MODE == "execute" ]]; then
+  brew_roots=$(brew info --installed --json=v2 | jq -r \
+    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
+  [[ $brew_roots == "$expected_brew_roots" ]] || {
+    printf 'Homebrew requested formulae changed since review. Expected:\n%s\n\nActual:\n%s\n' \
+      "$expected_brew_roots" "$brew_roots" >&2
+    exit 1
+  }
 
-base_brew_casks=(bruno caffeine codex font-hack font-hack-nerd-font ghostty mactex-no-gui ngrok vlc)
-adopted_brew_casks=(discord logos steam telegram)
-replaced_brew_casks=(balenaetcher raspberry-pi-imager signal)
-for cask in "${base_brew_casks[@]}"; do
-  brew list --cask "$cask" >/dev/null 2>&1 || fail "expected Homebrew cask is missing: $cask"
-done
-while IFS= read -r cask; do
-  case $cask in
-    balenaetcher | bruno | caffeine | codex | discord | font-hack | font-hack-nerd-font | ghostty | logos | mactex-no-gui | ngrok | raspberry-pi-imager | signal | steam | telegram | vlc) ;;
-    *) fail "unexpected Homebrew cask: $cask" ;;
-  esac
-done < <(brew list --cask)
-[[ $(brew tap) == $'anomalyco/tap\nhashicorp/tap' ]] || fail "Homebrew taps changed since review"
+  base_brew_casks=(bruno caffeine codex font-hack font-hack-nerd-font ghostty mactex-no-gui ngrok vlc)
+  adopted_brew_casks=(discord logos steam telegram)
+  replaced_brew_casks=(balenaetcher raspberry-pi-imager signal)
+  for cask in "${base_brew_casks[@]}"; do
+    brew list --cask "$cask" >/dev/null 2>&1 || fail "expected Homebrew cask is missing: $cask"
+  done
+  while IFS= read -r cask; do
+    case $cask in
+      balenaetcher | bruno | caffeine | codex | discord | font-hack | font-hack-nerd-font | ghostty | logos | mactex-no-gui | ngrok | raspberry-pi-imager | signal | steam | telegram | vlc) ;;
+      *) fail "unexpected Homebrew cask: $cask" ;;
+    esac
+  done < <(brew list --cask)
+  [[ $(brew tap) == $'anomalyco/tap\nhashicorp/tap' ]] || fail "Homebrew taps changed since review"
 
-expected_apps=(
-  "/Applications/IntelliJ IDEA.app"
-  /Applications/Output
-  /Applications/Sparrow.app
-  /Applications/X-Plane
-  /Applications/balenaEtcher.app
-  /Applications/Discord.app
-  /Applications/Logos.app
-  /Applications/MakeMKV.app
-  "/Applications/Raspberry Pi Imager.app"
-  /Applications/Signal.app
-  /Applications/Steam.app
-  /Applications/Telegram.app
-  /Applications/zoom.us.app
-)
-for app in "${expected_apps[@]}"; do
-  [[ -e $app || -L $app ]] || fail "expected application path is missing: $app"
-done
+  expected_apps=(
+    "/Applications/IntelliJ IDEA.app"
+    /Applications/Output
+    /Applications/Sparrow.app
+    /Applications/X-Plane
+    /Applications/balenaEtcher.app
+    /Applications/Discord.app
+    /Applications/Logos.app
+    /Applications/MakeMKV.app
+    "/Applications/Raspberry Pi Imager.app"
+    /Applications/Signal.app
+    /Applications/Steam.app
+    /Applications/Telegram.app
+    /Applications/zoom.us.app
+  )
+  for app in "${expected_apps[@]}"; do
+    [[ -e $app || -L $app ]] || fail "expected application path is missing: $app"
+  done
 
-[[ $(readlink "$HOME/.zshenv") == "dotfiles/zsh/.zshenv" ]] || fail "unexpected ~/.zshenv owner"
-[[ $(readlink "$HOME/.zshrc") == "dotfiles/zsh/.zshrc" ]] || fail "unexpected ~/.zshrc owner"
-[[ $(readlink "$HOME/.gitconfig") == "dotfiles/git/.gitconfig" ]] || fail "unexpected ~/.gitconfig owner"
-[[ $(readlink "$HOME/.config/ghostty") == "../dotfiles/ghostty/.config/ghostty" ]] || fail "unexpected Ghostty owner"
-[[ $(readlink "$HOME/.config/lazygit") == "../dotfiles/lazygit/.config/lazygit" ]] || fail "unexpected LazyGit owner"
-[[ $(readlink "$HOME/.config/nvim") == "../dotfiles/nvim/.config/nvim" ]] || fail "unexpected Neovim owner"
+  [[ $(readlink "$HOME/.zshenv") == "dotfiles/zsh/.zshenv" ]] || fail "unexpected ~/.zshenv owner"
+  [[ $(readlink "$HOME/.zshrc") == "dotfiles/zsh/.zshrc" ]] || fail "unexpected ~/.zshrc owner"
+  [[ $(readlink "$HOME/.gitconfig") == "dotfiles/git/.gitconfig" ]] || fail "unexpected ~/.gitconfig owner"
+  [[ $(readlink "$HOME/.config/ghostty") == "../dotfiles/ghostty/.config/ghostty" ]] || fail "unexpected Ghostty owner"
+  [[ $(readlink "$HOME/.config/lazygit") == "../dotfiles/lazygit/.config/lazygit" ]] || fail "unexpected LazyGit owner"
+  [[ $(readlink "$HOME/.config/nvim") == "../dotfiles/nvim/.config/nvim" ]] || fail "unexpected Neovim owner"
 
-tmutil destinationinfo | grep -q 'Name *: tm-kerkhof' || fail "expected Time Machine destination is unavailable"
-printf 'Verify Time Machine completed a current backup, then type exactly: %s\n> ' "$CONFIRMATION"
-read -r confirmation
-[[ $confirmation == "$CONFIRMATION" ]] || fail "backup confirmation did not match"
+  tmutil destinationinfo | grep -q 'Name *: tm-kerkhof' || fail "expected Time Machine destination is unavailable"
+  printf 'Verify Time Machine completed a current backup, then type exactly: %s\n> ' "$CONFIRMATION"
+  read -r confirmation
+  [[ $confirmation == "$CONFIRMATION" ]] || fail "backup confirmation did not match"
 
-mkdir -p "$HOME/.local/state/nix-cutover"
-git rev-parse HEAD >"$HOME/.local/state/nix-cutover/git-revision.before"
-brew leaves >"$HOME/.local/state/nix-cutover/brew-leaves.before"
-printf '%s\n' "$brew_roots" >"$HOME/.local/state/nix-cutover/brew-roots.before"
-brew list --cask >"$HOME/.local/state/nix-cutover/brew-casks.before"
+  mkdir -p "$HOME/.local/state/nix-cutover"
+  git rev-parse HEAD >"$HOME/.local/state/nix-cutover/git-revision.before"
+  brew leaves >"$HOME/.local/state/nix-cutover/brew-leaves.before"
+  printf '%s\n' "$brew_roots" >"$HOME/.local/state/nix-cutover/brew-roots.before"
+  brew list --cask >"$HOME/.local/state/nix-cutover/brew-casks.before"
 
-"$NIX_BIN" flake check path:. --print-build-logs
-"$NIX_BIN" build path:.#darwinConfigurations.personal.system --out-link result-personal
-SYSTEM_PATH=$(readlink result-personal)
+  "$NIX_BIN" flake check path:. --print-build-logs
+  "$NIX_BIN" build path:.#darwinConfigurations.personal.system --out-link result-personal
+  SYSTEM_PATH=$(readlink result-personal)
+  [[ -x $SYSTEM_PATH/activate ]] || fail "personal system activation is missing"
+
+  casks_to_adopt=()
+  for cask in "${adopted_brew_casks[@]}"; do
+    if ! brew list --cask "$cask" >/dev/null 2>&1; then
+      casks_to_adopt+=("$cask")
+    fi
+  done
+  if ((${#casks_to_adopt[@]})); then
+    brew install --cask --adopt "${casks_to_adopt[@]}"
+  fi
+
+  casks_to_replace=()
+  for cask in "${replaced_brew_casks[@]}"; do
+    if ! brew list --cask "$cask" >/dev/null 2>&1; then
+      casks_to_replace+=("$cask")
+    fi
+  done
+  if ((${#casks_to_replace[@]})); then
+    brew install --cask --force "${casks_to_replace[@]}"
+  fi
+
+  sudo -v
+
+  old_hm_apps="$HOME/Applications/Home Manager Apps"
+  if [[ -L $old_hm_apps ]]; then
+    [[ $(readlink "$old_hm_apps") == /nix/store/*-home-manager-files/Applications/Home\ Manager\ Apps ]] || fail "unexpected Home Manager Apps owner"
+    rm "$old_hm_apps"
+  elif [[ -e $old_hm_apps ]]; then
+    fail "unexpected Home Manager Apps directory"
+  fi
+
+  # Parent-directory Stow links must be gone before Home Manager writes children.
+  /opt/homebrew/bin/stow --dir="$repo" --target="$HOME" --delete ghostty git lazygit nvim zsh
+
+  nix_custom=/etc/nix/nix.custom.conf
+  if [[ -f $nix_custom && ! -L $nix_custom ]]; then
+    [[ $(shasum -a 256 "$nix_custom") == "3bd68ef979a42070a44f8d82c205cfd8e8cca425d91253ec2c10a88179bb34aa  $nix_custom" ]] || fail "unexpected Determinate Nix custom configuration"
+    [[ ! -e $nix_custom.before-nix-darwin ]] || fail "Determinate Nix custom configuration backup already exists"
+    sudo mv "$nix_custom" "$nix_custom.before-nix-darwin"
+  fi
+
+  sudo "$NIX_ENV" --profile /nix/var/nix/profiles/system --set "$SYSTEM_PATH"
+  sudo -H "$SYSTEM_PATH/activate"
+else
+  SYSTEM_PATH=$(readlink result-personal)
+  [[ -x $SYSTEM_PATH/activate ]] || fail "personal system activation is missing"
+  [[ $(readlink -f /run/current-system) == "$SYSTEM_PATH" ]] || fail "personal system is not active"
+
+  brew_roots=$(brew info --installed --json=v2 | jq -r \
+    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
+  expected_brew_roots_with_mas=$(printf '%s\nmas\n' "$expected_brew_roots" | sort)
+  [[ $brew_roots == "$expected_brew_roots_with_mas" ]] || fail "Homebrew requested formulae changed before cleanup"
+
+  expected_brew_casks_before_cleanup=$(printf '%s\n' \
+    balenaetcher bruno caffeine codex discord font-hack font-hack-nerd-font ghostty \
+    logos mactex-no-gui ngrok raspberry-pi-imager signal steam telegram vlc)
+  [[ $(brew list --cask) == "$expected_brew_casks_before_cleanup" ]] || fail "Homebrew casks changed before cleanup"
+  [[ $(brew tap) == $'anomalyco/tap\nhashicorp/tap' ]] || fail "Homebrew taps changed before cleanup"
+
+  tmutil destinationinfo | grep -q 'Name *: tm-kerkhof' || fail "expected Time Machine destination is unavailable"
+  printf 'Verify Time Machine completed a current backup, then type exactly: %s\n> ' "$CONFIRMATION"
+  read -r confirmation
+  [[ $confirmation == "$CONFIRMATION" ]] || fail "backup confirmation did not match"
+fi
 readonly SYSTEM_PATH
-[[ -x $SYSTEM_PATH/activate ]] || fail "personal system activation is missing"
-
-casks_to_adopt=()
-for cask in "${adopted_brew_casks[@]}"; do
-  if ! brew list --cask "$cask" >/dev/null 2>&1; then
-    casks_to_adopt+=("$cask")
-  fi
-done
-if ((${#casks_to_adopt[@]})); then
-  brew install --cask --adopt "${casks_to_adopt[@]}"
-fi
-
-casks_to_replace=()
-for cask in "${replaced_brew_casks[@]}"; do
-  if ! brew list --cask "$cask" >/dev/null 2>&1; then
-    casks_to_replace+=("$cask")
-  fi
-done
-if ((${#casks_to_replace[@]})); then
-  brew install --cask --force "${casks_to_replace[@]}"
-fi
-
-sudo -v
-
-# Parent-directory Stow links must be gone before Home Manager writes children.
-/opt/homebrew/bin/stow --dir="$repo" --target="$HOME" --delete ghostty git lazygit nvim zsh
-
-sudo "$NIX_ENV" --profile /nix/var/nix/profiles/system --set "$SYSTEM_PATH"
-sudo "$SYSTEM_PATH/activate"
 
 readonly PROFILE_BIN="/etc/profiles/per-user/$USER/bin"
 [[ -x $PROFILE_BIN/nvim ]] || fail "Home Manager Neovim is unavailable"
@@ -204,13 +245,13 @@ sudo /opt/homebrew/bin/brew services stop dnsmasq >/dev/null 2>&1 || true
 brew services stop mysql@8.4 >/dev/null 2>&1 || true
 brew services stop temporal >/dev/null 2>&1 || true
 
+brew uninstall --cask font-hack mactex-no-gui
+
 formulae=()
 while IFS= read -r formula; do
-  [[ -n $formula ]] && formulae+=("$formula")
-done <<<"$expected_brew_roots"
-brew uninstall --formula "${formulae[@]}"
-brew uninstall --cask font-hack mactex-no-gui
-brew autoremove
+  [[ -n $formula && $formula != "mas" ]] && formulae+=("$formula")
+done < <(brew list --formula)
+brew uninstall --formula --ignore-dependencies --force "${formulae[@]}"
 brew untap anomalyco/tap hashicorp/tap
 
 rm -rf \
@@ -236,7 +277,7 @@ sudo rm -rf /opt/homebrew/var/mysql
 rmdir "$HOME/.local/bin" >/dev/null 2>&1 || true
 rm -f "$HOME/.gnupg/gpg-agent.conf.hm-backup"
 
-[[ $(brew leaves) == "mas" ]] || fail "Homebrew formula leaves should contain only mas"
+[[ $(brew list --formula) == "mas" ]] || fail "Homebrew formula inventory should contain only mas"
 for app in "/Applications/IntelliJ IDEA.app" /Applications/Output /Applications/Sparrow.app /Applications/X-Plane /Applications/zoom.us.app; do
   [[ ! -e $app && ! -L $app ]] || fail "removed application path remains: $app"
 done
