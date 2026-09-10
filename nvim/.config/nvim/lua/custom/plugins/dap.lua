@@ -25,7 +25,7 @@ dap.adapters['pwa-node'] = {
   host = 'localhost',
   port = '${port}',
   executable = {
-    command = 'js-debug',
+    command = vim.g.js_debug_adapter,
     args = { '${port}' },
   },
 }

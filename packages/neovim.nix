@@ -138,6 +138,7 @@ in
     ];
     luaRcContent = ''
       vim.g.nix_nvim_config = '${configPlugin}'
+      vim.g.js_debug_adapter = 'js-debug'
       vim.g.vue_typescript_plugin_path = '${pkgs.vue-language-server}/lib/language-tools/packages/typescript-plugin'
       ${builtins.readFile ../nvim/.config/nvim/init.lua}
     '';

@@ -68,8 +68,9 @@ The initial nix-darwin Homebrew policy uses `cleanup = "none"`. No undeclared
 formula, cask, tap, service, or data directory may be removed during initial
 activation.
 
-## Preserved Worktree State
+## Pre-Cutover Neovim
 
-`nvim/.config/nvim/lazy-lock.json` had an unstaged plugin update before the
-`nix` branch was created. Migration work must preserve that change until plugin
-ownership moves to Nix.
+The Stow link still loads `nvim/.config/nvim/init.lua` in the Homebrew editor.
+Until the coordinated cutover removes that link, the config adds the existing
+Lazy plugin checkouts to `runtimepath` without invoking Lazy or downloading
+updates. The Nix-wrapped editor does not use this compatibility path.
