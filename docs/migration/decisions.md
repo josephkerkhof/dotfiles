@@ -11,9 +11,11 @@ deferred until the personal configuration is stable.
 - Fonts: retain the declarative Hack Nerd Font cask and remove the duplicate
   plain `font-hack` cask during cutover.
 - Third-party GUI apps: adopt and declare Homebrew casks for balenaEtcher,
-  Discord, Logos, MakeMKV, Raspberry Pi Imager, Signal, Steam, and Telegram on
-  the personal host. Remove the Sparrow, IntelliJ IDEA, and Zoom app bundles
-  during cutover while preserving their user data and settings.
+  Discord, Logos, Raspberry Pi Imager, Signal, Steam, and Telegram on the
+  personal host. MakeMKV remains a manual exception because Homebrew disabled
+  its cask after it failed Gatekeeper validation. Remove the Sparrow, IntelliJ
+  IDEA, and Zoom app bundles during cutover while preserving their user data and
+  settings.
 - Mac App Store: declare GarageBand, iMovie, Keynote, Numbers, Pages, Pixelmator
   Pro, and Wipr by App Store ID. Retain Homebrew `mas` as the sole formula leaf
   needed for App Store ownership.

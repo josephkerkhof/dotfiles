@@ -72,7 +72,11 @@ activation.
 - Existing Homebrew casks retained by the shared profile: Bruno, Caffeine,
   Codex, Hack Nerd Font, Ghostty, ngrok, and VLC.
 - Existing app bundles to be adopted as personal Homebrew casks: balenaEtcher,
-  Discord, Logos, MakeMKV, Raspberry Pi Imager, Signal, Steam, and Telegram.
+  Discord, Logos, Raspberry Pi Imager, Signal, Steam, and Telegram. Cutover
+  replaces the balenaEtcher, Raspberry Pi Imager, and Signal bundles when their
+  existing artifacts cannot be adopted.
+- MakeMKV remains manually installed because Homebrew disabled its cask after it
+  failed Gatekeeper validation.
 - App Store applications declared by ID: GarageBand, iMovie, Keynote, Numbers,
   Pages, Pixelmator Pro, and Wipr.
 - App bundles to be removed while preserving user data: IntelliJ IDEA, Sparrow,

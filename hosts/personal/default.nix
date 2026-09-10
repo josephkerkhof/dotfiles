@@ -17,7 +17,6 @@
       "balenaetcher"
       "discord"
       "logos"
-      "makemkv"
       "raspberry-pi-imager"
       "signal"
       "steam"

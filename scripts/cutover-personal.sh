@@ -86,13 +86,14 @@ brew_roots=$(brew info --installed --json=v2 | jq -r \
 }
 
 base_brew_casks=(bruno caffeine codex font-hack font-hack-nerd-font ghostty mactex-no-gui ngrok vlc)
-adopted_brew_casks=(balenaetcher discord logos makemkv raspberry-pi-imager signal steam telegram)
+adopted_brew_casks=(discord logos steam telegram)
+replaced_brew_casks=(balenaetcher raspberry-pi-imager signal)
 for cask in "${base_brew_casks[@]}"; do
   brew list --cask "$cask" >/dev/null 2>&1 || fail "expected Homebrew cask is missing: $cask"
 done
 while IFS= read -r cask; do
   case $cask in
-    balenaetcher | bruno | caffeine | codex | discord | font-hack | font-hack-nerd-font | ghostty | logos | makemkv | mactex-no-gui | ngrok | raspberry-pi-imager | signal | steam | telegram | vlc) ;;
+    balenaetcher | bruno | caffeine | codex | discord | font-hack | font-hack-nerd-font | ghostty | logos | mactex-no-gui | ngrok | raspberry-pi-imager | signal | steam | telegram | vlc) ;;
     *) fail "unexpected Homebrew cask: $cask" ;;
   esac
 done < <(brew list --cask)
@@ -149,6 +150,16 @@ for cask in "${adopted_brew_casks[@]}"; do
 done
 if ((${#casks_to_adopt[@]})); then
   brew install --cask --adopt "${casks_to_adopt[@]}"
+fi
+
+casks_to_replace=()
+for cask in "${replaced_brew_casks[@]}"; do
+  if ! brew list --cask "$cask" >/dev/null 2>&1; then
+    casks_to_replace+=("$cask")
+  fi
+done
+if ((${#casks_to_replace[@]})); then
+  brew install --cask --force "${casks_to_replace[@]}"
 fi
 
 sudo -v
@@ -238,7 +249,6 @@ expected_brew_casks=$(printf '%s\n' \
   font-hack-nerd-font \
   ghostty \
   logos \
-  makemkv \
   ngrok \
   raspberry-pi-imager \
   signal \

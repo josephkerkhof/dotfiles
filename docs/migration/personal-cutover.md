@@ -32,7 +32,8 @@ The script performs these stages:
    `~/.local/state/nix-cutover`.
 4. Run all flake checks, including the private input, and create the
    `result-personal` recovery GC root.
-5. Adopt the approved existing third-party app bundles as Homebrew casks.
+5. Adopt approved third-party app bundles as Homebrew casks, replacing the three
+   bundles that cannot be adopted safely in place.
 6. Remove Stow links, set the first nix-darwin system profile, and activate it.
 7. Validate the Nix-owned shell, Neovim, Git, GPG, OpenCode, Ghostty, and
    LazyGit.
