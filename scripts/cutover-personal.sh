@@ -28,6 +28,7 @@ cd "$repo"
 [[ $(git branch --show-current) == "nix" ]] || fail "expected the nix branch"
 [[ -z $(git status --porcelain) ]] || fail "the Git worktree is not clean"
 [[ -x $NIX_BIN && -x $NIX_ENV ]] || fail "Determinate Nix is unavailable"
+readonly PROFILE_BIN="/etc/profiles/per-user/$USER/bin"
 
 expected_brew_roots=$(printf '%s\n' \
   act \
@@ -82,8 +83,8 @@ expected_brew_roots=$(printf '%s\n' \
   zsh-syntax-highlighting)
 
 if [[ $MODE == "execute" ]]; then
-  brew_roots=$(brew info --installed --json=v2 | jq -r \
-    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
+  brew_roots=$(brew info --installed --json=v2 | /opt/homebrew/bin/jq -r \
+    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | /usr/bin/sort)
   [[ $brew_roots == "$expected_brew_roots" ]] || {
     printf 'Homebrew requested formulae changed since review. Expected:\n%s\n\nActual:\n%s\n' \
       "$expected_brew_roots" "$brew_roots" >&2
@@ -193,16 +194,29 @@ else
   [[ -x $SYSTEM_PATH/activate ]] || fail "personal system activation is missing"
   [[ $(readlink -f /run/current-system) == "$SYSTEM_PATH" ]] || fail "personal system is not active"
 
-  brew_roots=$(brew info --installed --json=v2 | jq -r \
-    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | sort)
-  expected_brew_roots_with_mas=$(printf '%s\nmas\n' "$expected_brew_roots" | sort)
-  [[ $brew_roots == "$expected_brew_roots_with_mas" ]] || fail "Homebrew requested formulae changed before cleanup"
+  brew_roots=$(brew info --installed --json=v2 | "$PROFILE_BIN/jq" -r \
+    '.formulae[] | select(any(.installed[]; .installed_on_request == true)) | .full_name' | /usr/bin/sort)
+  printf '%s\n' "$brew_roots" | grep -Fxq mas || fail "Homebrew mas formula is missing before cleanup"
+  while IFS= read -r formula; do
+    [[ $formula == "mas" ]] && continue
+    grep -Fxq "$formula" <<<"$expected_brew_roots" || fail "unexpected Homebrew formula before cleanup: $formula"
+  done <<<"$brew_roots"
 
-  expected_brew_casks_before_cleanup=$(printf '%s\n' \
-    balenaetcher bruno caffeine codex discord font-hack font-hack-nerd-font ghostty \
-    logos mactex-no-gui ngrok raspberry-pi-imager signal steam telegram vlc)
-  [[ $(brew list --cask) == "$expected_brew_casks_before_cleanup" ]] || fail "Homebrew casks changed before cleanup"
-  [[ $(brew tap) == $'anomalyco/tap\nhashicorp/tap' ]] || fail "Homebrew taps changed before cleanup"
+  for cask in balenaetcher bruno caffeine codex discord font-hack-nerd-font ghostty logos ngrok raspberry-pi-imager signal steam telegram vlc; do
+    brew list --cask "$cask" >/dev/null 2>&1 || fail "managed cask is missing before cleanup: $cask"
+  done
+  while IFS= read -r cask; do
+    case $cask in
+      balenaetcher | bruno | caffeine | codex | discord | font-hack | font-hack-nerd-font | ghostty | logos | mactex-no-gui | ngrok | raspberry-pi-imager | signal | steam | telegram | vlc) ;;
+      *) fail "unexpected Homebrew cask before cleanup: $cask" ;;
+    esac
+  done < <(brew list --cask)
+  while IFS= read -r tap; do
+    case $tap in
+      anomalyco/tap | hashicorp/tap) ;;
+      *) fail "unexpected Homebrew tap before cleanup: $tap" ;;
+    esac
+  done < <(brew tap)
 
   tmutil destinationinfo | grep -q 'Name *: tm-kerkhof' || fail "expected Time Machine destination is unavailable"
   printf 'Verify Time Machine completed a current backup, then type exactly: %s\n> ' "$CONFIRMATION"
@@ -211,7 +225,6 @@ else
 fi
 readonly SYSTEM_PATH
 
-readonly PROFILE_BIN="/etc/profiles/per-user/$USER/bin"
 [[ -x $PROFILE_BIN/nvim ]] || fail "Home Manager Neovim is unavailable"
 [[ -x $PROFILE_BIN/opencode ]] || fail "Home Manager OpenCode is unavailable"
 [[ -x $PROFILE_BIN/gpg ]] || fail "Home Manager GnuPG is unavailable"
@@ -245,7 +258,19 @@ sudo /opt/homebrew/bin/brew services stop dnsmasq >/dev/null 2>&1 || true
 brew services stop mysql@8.4 >/dev/null 2>&1 || true
 brew services stop temporal >/dev/null 2>&1 || true
 
-brew uninstall --cask font-hack mactex-no-gui
+casks_to_remove=()
+for cask in font-hack mactex-no-gui; do
+  brew list --cask "$cask" >/dev/null 2>&1 && casks_to_remove+=("$cask")
+done
+if ((${#casks_to_remove[@]})); then
+  brew uninstall --cask "${casks_to_remove[@]}"
+fi
+
+if brew list --formula dnsmasq >/dev/null 2>&1; then
+  dnsmasq_cellar=$(brew --cellar dnsmasq)
+  [[ $dnsmasq_cellar == "/opt/homebrew/Cellar/dnsmasq" ]] || fail "unexpected dnsmasq cellar: $dnsmasq_cellar"
+  sudo chown -R "$USER":admin "$dnsmasq_cellar"
+fi
 
 formulae=()
 while IFS= read -r formula; do
