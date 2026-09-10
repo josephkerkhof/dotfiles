@@ -290,13 +290,34 @@
         "type": "github"
       }
     },
+    "private-assets": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789074885,
+        "narHash": "sha256-hiEEU+HzS5qKLuEl8EQXaDg1pfxYAHSHWmno60BEJDQ=",
+        "ref": "refs/heads/main",
+        "rev": "160403e109828f323e20d237a7de43593c502b7e",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/josephkerkhof/nix-private-assets.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/josephkerkhof/nix-private-assets.git"
+      }
+    },
     "root": {
       "inputs": {
         "determinate": "determinate",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs_3",
+        "private-assets": "private-assets"
       }
     }
   },

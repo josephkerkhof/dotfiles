@@ -16,6 +16,11 @@
 
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+
+    private-assets = {
+      url = "git+ssh://git@github.com/josephkerkhof/nix-private-assets.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {

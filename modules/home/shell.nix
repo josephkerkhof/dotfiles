@@ -1,9 +1,7 @@
 {...}: {
   home = {
     sessionPath = [
-      "$HOME/Library/TinyTeX/bin/universal-darwin"
       "$HOME/.local/bin"
-      "$HOME/.composer/vendor/bin"
     ];
 
     sessionVariables = {
@@ -28,10 +26,6 @@
       enable = true;
       enableCompletion = true;
       syntaxHighlighting.enable = true;
-
-      envExtra = ''
-        [ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-      '';
 
       history = {
         ignoreDups = false;
@@ -103,7 +97,6 @@
           }
         fi
 
-        [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
         [ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
         [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
