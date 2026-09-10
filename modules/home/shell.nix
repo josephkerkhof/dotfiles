@@ -21,6 +21,10 @@ _: {
     zsh = {
       enable = true;
       enableCompletion = true;
+      completionInit = ''
+        mkdir -p "$XDG_CACHE_HOME/zsh"
+        autoload -U compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
+      '';
       syntaxHighlighting.enable = true;
 
       history = {

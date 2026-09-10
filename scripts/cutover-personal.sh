@@ -276,8 +276,17 @@ formulae=()
 while IFS= read -r formula; do
   [[ -n $formula && $formula != "mas" ]] && formulae+=("$formula")
 done < <(brew list --formula)
-brew uninstall --formula --ignore-dependencies --force "${formulae[@]}"
-brew untap anomalyco/tap hashicorp/tap
+if ((${#formulae[@]})); then
+  brew uninstall --formula --ignore-dependencies --force "${formulae[@]}"
+fi
+
+taps_to_remove=()
+for tap in anomalyco/tap hashicorp/tap; do
+  brew tap | grep -Fxq "$tap" && taps_to_remove+=("$tap")
+done
+if ((${#taps_to_remove[@]})); then
+  brew untap "${taps_to_remove[@]}"
+fi
 
 rm -rf \
   "$HOME/.bun" \
@@ -287,6 +296,7 @@ rm -rf \
   "$HOME/.local/share/nvim/mason" \
   "$HOME/.local/share/nvim/site"
 rm -f "$HOME/.local/share/nvim"/tree-sitter-*.tar.gz
+rm -f "$HOME"/.zcompdump* "$HOME/.config/zsh"/.zcompdump*
 rm -f \
   "$HOME/Library/Fonts/BerkeleyMono-Regular.otf" \
   "$HOME/Library/Fonts/BerkeleyMono-Bold.otf" \
@@ -324,7 +334,7 @@ expected_brew_casks=$(printf '%s\n' \
 [[ $(brew list --cask) == "$expected_brew_casks" ]] || fail "unexpected Homebrew cask inventory after cleanup"
 [[ -z $(brew tap) ]] || fail "unexpected Homebrew taps remain after cleanup"
 for app_id in 682658836 408981434 361285480 361304891 361309726 1289583905 1662217862; do
-  /opt/homebrew/bin/mas list | grep -q "^$app_id " || fail "App Store application is missing: $app_id"
+  /opt/homebrew/bin/mas list | grep -Eq "^[[:space:]]*${app_id}[[:space:]]" || fail "App Store application is missing: $app_id"
 done
 
 readonly TARGET_PATH="$PROFILE_BIN:/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin"
