@@ -1,52 +1,274 @@
-# dotfiles
+# macOS Workstation
 
-Declarative macOS workstation configuration built with nix-darwin, Home
-Manager, and Determinate Nix. Nix owns command-line tools and configuration;
-nix-darwin uses Homebrew only for GUI applications and `mas` for App Store
-applications.
+This repository is the source of truth for Joseph's macOS workstation. It uses
+Determinate Nix, nix-darwin, Home Manager, nix-homebrew, and a private font
+flake.
 
-## Hosts
+The `personal` configuration is active and under canary evaluation. The `work`
+configuration is only a placeholder and must not be activated yet.
 
-- `personal`: primary Apple Silicon personal Mac profile.
-- `work`: scaffold only; inventory and activation are deferred until the
-  personal canary is stable.
+> [!IMPORTANT]
+> `scripts/cutover-personal.sh` completed the one-time migration. It is not a
+> command for normal system management. Keep `result-personal` and do not run
+> garbage collection until the canary is accepted.
 
-Project runtimes and services belong in project `devenv.sh` environments rather
-than the workstation profile.
+## How The System Is Organized
+
+| What                       | Managed by          | Where to change it                               |
+| -------------------------- | ------------------- | ------------------------------------------------ |
+| Flake dependencies         | Nix                 | `flake.nix`, `flake.lock`                        |
+| Shared macOS behavior      | nix-darwin          | `modules/darwin/base.nix`                        |
+| macOS preferences          | nix-darwin          | `modules/darwin/defaults.nix`                    |
+| Personal apps and fonts    | nix-darwin/Homebrew | `hosts/personal/default.nix`                     |
+| Shared Homebrew casks      | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`                    |
+| Command-line tools         | Home Manager        | `modules/home/packages.nix`                      |
+| Shell, Git, and GPG        | Home Manager        | `modules/home/shell.nix`, `modules/home/git.nix` |
+| Ghostty and OpenCode files | Home Manager        | `modules/home/config-files.nix`                  |
+| Neovim package and tools   | Nix                 | `packages/neovim.nix`                            |
+| Neovim behavior            | Neovim source       | `nvim/.config/nvim/`                             |
+
+The ownership rule is:
+
+- Nix owns workstation command-line tools and managed configuration.
+- Homebrew owns declared casks and the single `mas` formula. Most casks are GUI
+  apps; Codex, ngrok, and the font cask are current exceptions.
+- Project runtimes, databases, and services generally belong in each project's
+  devenv. The workstation Go toolchain is a current exception.
+- Secrets, credentials, GPG keys, application data, and game data remain local
+  mutable state.
+
+## Apply A Change
+
+Run evaluation and builds as your normal user. The flake fetches a private input
+over SSH, which may not work when Nix evaluates it as root.
+
+### 1. Format and check
+
+After editing Nix files:
+
+```sh
+cd ~/dotfiles
+nix fmt
+nix flake check path:. --print-build-logs
+```
+
+`nix flake check` evaluates and builds the personal system, the work scaffold,
+and the packaged Neovim check. It does not activate anything.
+
+### 2. Build the personal system
+
+```sh
+nix build path:.#darwinConfigurations.personal.system \
+  --out-link result-personal
+```
+
+Building updates the `result-personal` symlink but does not change the running
+system.
+
+### 3. Activate the build
+
+```sh
+system_path=$(readlink -f result-personal)
+sudo -H /nix/var/nix/profiles/default/bin/nix-env \
+  --profile /nix/var/nix/profiles/system --set "$system_path"
+sudo -H "$system_path/activate"
+```
+
+The first command selects the system generation. The second applies macOS,
+Homebrew, Home Manager, and user configuration.
+
+### 4. Confirm what is running
+
+```sh
+readlink -f result-personal
+readlink -f /nix/var/nix/profiles/system
+readlink -f /run/current-system
+```
+
+All three commands should print the same `/nix/store/...-darwin-system-...`
+path. Test the command, application, or preference you changed before committing
+the result.
+
+For shell changes, test without environment inherited from an old terminal
+process:
+
+```sh
+/usr/bin/env -i \
+  HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL=/bin/zsh \
+  TERM=xterm-256color PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+  /bin/zsh -lic exit
+```
+
+## Common Changes
+
+### Add or remove a command-line tool
+
+Edit `modules/home/packages.nix`, then follow the normal check, build, and
+activation workflow.
+
+Do not install workstation CLI tools with Homebrew when a suitable Nix package
+exists. Language runtimes and databases should usually be added to a project's
+devenv instead; Go and its editor tools are currently installed globally as an
+explicit exception.
+
+### Add a GUI application
+
+- Add a personal-only cask to `hosts/personal/default.nix`.
+- Add a genuinely shared cask to `modules/darwin/homebrew.nix`.
+- Add an App Store application and its numeric ID to `homebrew.masApps` in the
+  personal host module.
+
+Activation installs missing declared applications. The App Store must already
+be signed in for `mas` applications.
+
+### Remove a GUI application
+
+Remove its declaration and activate the new system, then uninstall the app
+separately after confirming that its mutable data should be retained or removed.
+
+Homebrew cleanup is deliberately set to `"none"`. Removing a cask from Nix does
+not automatically uninstall the application or delete its data.
+
+### Change macOS preferences
+
+Edit `modules/darwin/defaults.nix`. Activation may restart affected macOS
+components such as the Dock.
+
+Not every preference is managed. For example, Dock pins are currently left to
+macOS, so manually removing a stale Dock icon remains effective after future
+activations.
+
+### Change Neovim
+
+- Edit `nvim/.config/nvim/` for editor behavior.
+- Edit `packages/neovim.nix` for plugins, parsers, language servers, formatters,
+  and debug adapters.
+- Build only Neovim with `nix build path:.#neovim` for a focused package check.
+
+Neovim does not use Lazy, Mason, or runtime Treesitter downloads. Its runtime
+dependencies are part of the Nix package.
+
+## Update Nix Dependencies
+
+Update all inputs recorded in `flake.lock`:
+
+```sh
+cd ~/dotfiles
+nix flake update
+nix flake check path:. --print-build-logs
+```
+
+Update one input, such as nixpkgs:
+
+```sh
+nix flake update nixpkgs
+```
+
+Review the `flake.lock` diff, build, activate, and test before committing an
+update. Updating inputs can change many packages at once even when no module was
+edited.
+
+## Inspect And Roll Back
+
+List system generations:
+
+```sh
+sudo -H /run/current-system/sw/bin/darwin-rebuild --list-generations
+```
+
+After confirming the previous entry is a validated post-cutover generation,
+switch to and activate it:
+
+```sh
+sudo -H /run/current-system/sw/bin/darwin-rebuild --rollback
+```
+
+A generation rollback restores Nix-managed configuration only. It does not
+restore applications, services, package data, or other mutable state deleted by
+the cutover. Cutover failures use the fix-forward procedure in
+`docs/migration/personal-cutover.md` instead.
+
+Rollback also does not change the Git checkout or `flake.lock`. Fix or revert
+the repository separately before the next normal activation.
+
+To inspect the selected and running systems directly:
+
+```sh
+readlink -f /nix/var/nix/profiles/system
+readlink -f /run/current-system
+```
+
+## During Canary Evaluation
+
+- Keep the `result-personal` symlink. It is a garbage-collection root for the
+  validated build.
+- Do not run `nix store gc` yet.
+- Do not run `scripts/cutover-personal.sh` again.
+- Do not run `brew bundle` from the root `Brewfile`; it records the old
+  pre-cutover package set.
+- Record unexpected behavior before deleting application data or other mutable
+  state.
+- Use `docs/migration/` as cutover history. Current Nix modules are the source of
+  truth for ongoing configuration.
+
+After the canary is accepted, inspect potential garbage first:
+
+```sh
+nix store gc --dry-run
+```
+
+Only remove old roots or generations and run garbage collection as a separate,
+intentional maintenance task.
 
 ## Fresh Personal Mac
 
 1. Install the Xcode Command Line Tools and Determinate Nix.
-2. Sign into the App Store, restore the host-local GPG signing key, and configure
-   SSH access to GitHub, including the private `nix-private-assets` repository.
-3. Clone this repository at `~/dotfiles` and build the personal system:
+2. Sign in to the App Store.
+3. Restore the host-local GPG key and configure SSH access to GitHub and the
+   private `nix-private-assets` repository.
+4. Clone this repository to `~/dotfiles`.
+5. Run the normal check, build, and activation workflow above.
 
-```sh
-git clone git@github.com:josephkerkhof/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-/nix/var/nix/profiles/default/bin/nix flake check path:.
-/nix/var/nix/profiles/default/bin/nix build path:.#darwinConfigurations.personal.system --out-link result-personal
-system_path=$(readlink result-personal)
-sudo /nix/var/nix/profiles/default/bin/nix-env --profile /nix/var/nix/profiles/system --set "$system_path"
-sudo "$system_path/activate"
-```
+The historical personal migration procedure is documented in
+`docs/migration/personal-cutover.md`; it is not part of a fresh installation.
 
-The existing personal Mac has a stricter one-time migration procedure in
-[`docs/migration/personal-cutover.md`](docs/migration/personal-cutover.md).
+## Sync Neovim With kickstart.nvim
 
-## Syncing Neovim with upstream kickstart.nvim
-
-The Neovim config is based on
-[kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim), added through a
-Git subtree. Custom configuration lives in `lua/custom/plugins/` to minimize
-merge conflicts. Plugins, parsers, language servers, formatters, and debug
-adapters are packaged by Nix rather than installed at runtime.
-
-### Pull latest upstream changes
+The Neovim configuration is based on
+[kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and tracked as a
+Git subtree. Custom modules live under `lua/custom/plugins/` to reduce merge
+conflicts. A subtree pull creates a commit, so perform it on a temporary branch:
 
 ```sh
 cd ~/dotfiles
-git subtree pull --prefix nvim/.config/nvim https://github.com/nvim-lua/kickstart.nvim.git master --squash
+git switch -c update/kickstart
+git subtree pull \
+  --prefix nvim/.config/nvim \
+  https://github.com/nvim-lua/kickstart.nvim.git master --squash
 ```
 
-If there are merge conflicts, resolve them as you would with any git merge, then commit.
+Resolve conflicts before continuing. Review the resulting commit for any plugin
+or tool installation performed at runtime, including Lazy, Mason, `vim.pack`, or
+Treesitter downloads. Represent required dependencies in `packages/neovim.nix`
+instead.
+
+Build the package and test startup with isolated mutable state:
+
+```sh
+nix build path:.#neovim --out-link result-neovim
+test_home=$(mktemp -d)
+HOME="$test_home" \
+  XDG_CONFIG_HOME="$test_home/config" \
+  XDG_DATA_HOME="$test_home/data" \
+  XDG_STATE_HOME="$test_home/state" \
+  XDG_CACHE_HOME="$test_home/cache" \
+  ./result-neovim/bin/nvim --headless \
+  -c 'lua assert(vim.fn.exists(":Lazy") == 0); assert(vim.fn.exists(":Mason") == 0)' \
+  -c qa
+rm -rf "$test_home"
+nix flake check path:. --print-build-logs
+```
+
+The startup assertion covers the known mutable package managers; review is what
+catches new mechanisms added upstream. After the checks pass, fast-forward the
+`nix` branch to the reviewed update and delete the temporary branch.
