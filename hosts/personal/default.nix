@@ -35,6 +35,7 @@
   };
 
   home-manager.users.${username}.programs.git.settings = {
+    init.defaultBranch = "main";
     user = {
       name = "Joseph Kerkhof";
       email = "joseph@kerkhof.dev";
