@@ -75,7 +75,7 @@ SSH, and evaluating the flake under `sudo` may not have access to the user's SSH
 agent.
 
 ```sh
-nix fmt
+nix fmt -- .
 nix flake check path:. --print-build-logs
 nix build path:.#darwinConfigurations.personal.system --out-link result-personal
 ```
@@ -111,7 +111,7 @@ terminal application's inherited environment cannot hide startup behavior:
 
 ## Verification
 
-- Run `nix fmt` after changing Nix files and inspect any formatter changes.
+- Run `nix fmt -- .` after changing Nix files and inspect any formatter changes.
 - Run `nix flake check path:. --print-build-logs` for configuration changes.
 - Run `bash -n scripts/cutover-personal.sh` only when that historical script is
   edited.

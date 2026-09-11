@@ -48,7 +48,7 @@ After editing Nix files:
 
 ```sh
 cd ~/dotfiles
-nix fmt
+nix fmt -- .
 nix flake check path:. --print-build-logs
 ```
 
