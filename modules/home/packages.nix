@@ -3,6 +3,7 @@
     age
     blueutil
     coreutils-prefixed
+    devenv
     doctl
     fastfetch
     ffmpeg
