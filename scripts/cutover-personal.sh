@@ -296,7 +296,10 @@ rm -rf \
   "$HOME/.local/share/nvim/mason" \
   "$HOME/.local/share/nvim/site"
 rm -f "$HOME/.local/share/nvim"/tree-sitter-*.tar.gz
-rm -f "$HOME"/.zcompdump* "$HOME/.config/zsh"/.zcompdump*
+rm -f \
+  "$HOME"/.zcompdump* \
+  "$HOME/.config/zsh"/.zcompdump* \
+  "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"/zcompdump*
 rm -f \
   "$HOME/Library/Fonts/BerkeleyMono-Regular.otf" \
   "$HOME/Library/Fonts/BerkeleyMono-Bold.otf" \
@@ -343,6 +346,14 @@ for removed in terraform node pnpm npm wrangler mysql temporal rr act cloudflare
     fail "removed command still resolves: $removed"
   fi
 done
+shell_stderr=$(/usr/bin/env -i \
+  HOME="$HOME" USER="$USER" LOGNAME="$USER" SHELL=/bin/zsh \
+  TERM=xterm-256color PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+  /bin/zsh -lic '
+    (( $path[(Ie)/opt/homebrew/bin] == 0 )) || exit 1
+    (( $fpath[(Ie)/opt/homebrew/share/zsh/site-functions] == 0 )) || exit 1
+  ' 2>&1 >/dev/null) || fail "Homebrew remains integrated with the login shell"
+[[ -z $shell_stderr ]] || fail "login shell emitted errors: $shell_stderr"
 
 "$PROFILE_BIN/nvim" --headless -c 'lua assert(vim.fn.exists(":Lazy") == 0); assert(vim.fn.exists(":Mason") == 0)' -c qa
 /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate | grep -qi enabled || fail "application firewall is not enabled"
