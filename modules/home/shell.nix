@@ -69,6 +69,9 @@ _: {
         }
         zle -N _paste-from-normal-mode
         bindkey -M vicmd '^[[200~' _paste-from-normal-mode
+
+        # devenv auto-activation
+        eval "$(devenv hook zsh)"
       '';
     };
   };
