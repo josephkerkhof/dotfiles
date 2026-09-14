@@ -1,7 +1,9 @@
 {
+  config,
   inputs,
   lib,
   username,
+  workstationName,
   ...
 }: {
   determinateNix.enable = true;
@@ -25,6 +27,11 @@
     extraSpecialArgs = {inherit inputs username;};
     users.${username} = import ../home;
   };
+
+  system.systemBuilderCommands = ''
+    printf '%s' ${lib.escapeShellArg workstationName} > "$out/workstation-name"
+    printf '%s' ${lib.escapeShellArg config.networking.hostName} > "$out/workstation-hostname"
+  '';
 
   # Bound rollback history after a successful activation. Store garbage
   # collection remains a separate maintenance operation.

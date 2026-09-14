@@ -1,5 +1,10 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   home.packages = with pkgs; [
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.workstation
     age
     bash-language-server
     blueutil

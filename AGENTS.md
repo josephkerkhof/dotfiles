@@ -21,6 +21,7 @@
 | Neovim package, plugins, parsers, and tools  | Nix                 | `packages/neovim.nix`                                       |
 | Neovim behavior                              | Packaged source     | `nvim/.config/nvim/`                                        |
 | Project runtimes and services                | Project devenv      | Outside this workstation profile                            |
+| Workstation lifecycle utility                | Nix/Home Manager    | `packages/workstation.*`, `modules/home/packages.nix`       |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; Codex, ngrok, and the font cask are existing explicit exceptions.
@@ -72,6 +73,10 @@ remain host-local and mutable.
 Evaluate and build as the normal user. The private `private-assets` input uses
 SSH, and evaluating the flake under `sudo` may not have access to the user's SSH
 agent.
+
+The human-facing `workstation` command wraps this workflow, infers a target from
+its declared hostname, and refuses cross-host activation. Its implementation
+must preserve the underlying privilege and verification boundaries below.
 
 ```sh
 nix fmt -- .

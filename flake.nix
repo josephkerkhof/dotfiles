@@ -44,9 +44,9 @@
   }: let
     username = "joseph";
 
-    mkDarwin = hostModule:
+    mkDarwin = workstationName: hostModule:
       nix-darwin.lib.darwinSystem {
-        specialArgs = {inherit inputs username;};
+        specialArgs = {inherit inputs username workstationName;};
         modules = [
           determinate.darwinModules.default
           nix-homebrew.darwinModules.nix-homebrew
@@ -58,10 +58,15 @@
         ];
       };
   in {
-    darwinConfigurations.personal = mkDarwin ./hosts/personal;
+    darwinConfigurations.personal = mkDarwin "personal" ./hosts/personal;
 
-    packages.aarch64-darwin.neovim = import ./packages/neovim.nix {
-      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+    packages.aarch64-darwin = {
+      neovim = import ./packages/neovim.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
+      workstation = import ./packages/workstation.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
     };
 
     checks.aarch64-darwin = {
@@ -111,6 +116,30 @@
           touch "$out"
         '';
       personal = self.darwinConfigurations.personal.system;
+      workstation = self.packages.aarch64-darwin.workstation;
+      workstation-cli =
+        nixpkgs.legacyPackages.aarch64-darwin.runCommand "workstation-cli-check" {
+          nativeBuildInputs = [self.packages.aarch64-darwin.workstation];
+        } ''
+          workstation --help >/dev/null
+          workstation help activate >/dev/null
+          workstation help gc >/dev/null
+          test "$(cat ${self.darwinConfigurations.personal.system}/workstation-name)" = personal
+          test "$(cat ${self.darwinConfigurations.personal.system}/workstation-hostname)" = Josephs-MacBook-Pro
+          if workstation test --yes 2>/dev/null; then
+            echo "invalid test options unexpectedly succeeded" >&2
+            exit 1
+          fi
+          if workstation gc --workstation=personal 2>/dev/null; then
+            echo "workstation-scoped garbage collection unexpectedly succeeded" >&2
+            exit 1
+          fi
+          if workstation unknown-command 2>/dev/null; then
+            echo "unknown workstation command unexpectedly succeeded" >&2
+            exit 1
+          fi
+          touch "$out"
+        '';
     };
     formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
   };

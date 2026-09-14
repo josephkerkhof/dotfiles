@@ -22,6 +22,7 @@ inventoried.
 | Ghostty and OpenCode files | Home Manager        | `modules/home/config-files.nix` |
 | Neovim package and tools   | Nix                 | `packages/neovim.nix`           |
 | Neovim behavior            | Neovim source       | `nvim/.config/nvim/`            |
+| Workstation utility        | Nix/Home Manager    | `packages/workstation.*`        |
 
 The ownership rule is:
 
@@ -39,33 +40,61 @@ The ownership rule is:
 
 ## Apply A Change
 
-Run evaluation and builds as your normal user. The flake fetches a private input
-over SSH, which may not work when Nix evaluates it as root.
-
-### 1. Format and check
-
-After editing Nix files:
+The `workstation` command guides the normal test and activation workflow. It
+infers the current workstation from the Mac's hostname, explains each step, and
+asks before changing the running system:
 
 ```sh
 cd ~/dotfiles
-nix fmt -- .
-nix flake check path:. --print-build-logs
+workstation apply
 ```
 
-`nix flake check` evaluates and builds the personal system and packaged Neovim.
-It does not activate anything.
-
-### 2. Build the personal system
+Keep testing and activation separate when you want to inspect the candidate
+first:
 
 ```sh
-nix build path:.#darwinConfigurations.personal.system \
-  --out-link result-personal
+workstation test
+workstation status
+workstation activate
 ```
 
-Building updates the `result-personal` symlink but does not change the running
-system.
+Use the built-in help for workflows, examples, and the safety behavior of each
+command:
 
-### 3. Activate the build
+```sh
+workstation help
+workstation help activate
+workstation list
+```
+
+Pass a workstation explicitly to test a different declared configuration. Both
+option forms are accepted:
+
+```sh
+workstation test --workstation=personal
+workstation --workstation personal test
+```
+
+Cross-workstation testing is allowed, but activation is refused unless the
+configuration's declared hostname matches the current Mac.
+
+Before the utility has been activated for the first time, run the packaged
+version directly from the checkout:
+
+```sh
+nix run path:.#workstation -- apply
+```
+
+### What the utility does
+
+`workstation test` captures one immutable source snapshot, runs the
+repository-wide flake checks against it, and builds the selected configuration
+into `result-<workstation>`. It evaluates and builds as the normal user so the
+private SSH flake input remains accessible.
+
+`workstation activate` resolves that exact candidate, shows the current and
+candidate store paths, asks for confirmation, and then runs the established
+profile selection and activation commands:
 
 ```sh
 system_path=$(readlink -f result-personal)
@@ -74,22 +103,13 @@ sudo -H /nix/var/nix/profiles/default/bin/nix-env \
 sudo -H "$system_path/activate"
 ```
 
-The first command selects the system generation. The second applies macOS,
-Homebrew, Home Manager, and user configuration. After activation succeeds, the
-system profile retains the newest five generations and removes older generation
-links.
+Activation applies macOS, Homebrew, Home Manager, and user configuration. It
+then verifies that the candidate, selected system profile, and running system
+all resolve to the same store path. Successful activation retains the newest
+five system generations and removes older generation links.
 
-### 4. Confirm what is running
-
-```sh
-readlink -f result-personal
-readlink -f /nix/var/nix/profiles/system
-readlink -f /run/current-system
-```
-
-All three commands should print the same `/nix/store/...-darwin-system-...`
-path. Test the command, application, or preference you changed before committing
-the result.
+Test the command, application, or preference you changed before committing the
+result.
 
 For shell changes, test without environment inherited from an old terminal
 process:
@@ -234,17 +254,18 @@ Keep `result-personal` as the current candidate build. Successful activation
 automatically retains the newest five system generations, providing bounded
 rollback history. This does not garbage-collect unreferenced store paths.
 
-Before collecting the store, inspect the retained generations and potential
-garbage:
+Use the guided garbage-collection command:
 
 ```sh
-sudo -H /run/current-system/sw/bin/darwin-rebuild --list-generations
-nix store gc --dry-run
+workstation gc
 ```
 
-Garbage collection is a separate maintenance operation, not part of normal
-activation or verification. It never replaces backups for mutable application
-data, credentials, project state, or game data.
+It lists retained generations, previews machine-wide store garbage, and asks
+before collecting anything. `workstation gc --yes` still performs the preview
+but skips the final confirmation. Garbage collection is not scoped by
+`--workstation` and remains separate from normal activation or verification. It
+never replaces backups for mutable application data, credentials, project
+state, or game data.
 
 ## Fresh Personal Mac
 
