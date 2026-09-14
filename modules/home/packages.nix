@@ -3,6 +3,7 @@
     age
     bash-language-server
     blueutil
+    cloudflared
     coreutils-prefixed
     curl
     devenv

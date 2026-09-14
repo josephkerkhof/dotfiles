@@ -5,6 +5,7 @@
     ./neovim.nix
     ./packages.nix
     ./shell.nix
+    ./ssh.nix
   ];
 
   home = {

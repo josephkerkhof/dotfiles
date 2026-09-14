@@ -1,7 +1,7 @@
 # macOS Workstation
 
 This repository is the source of truth for Joseph's macOS workstation. It uses
-Determinate Nix, nix-darwin, Home Manager, nix-homebrew, and a private font
+Determinate Nix, nix-darwin, Home Manager, nix-homebrew, and a private assets
 flake.
 
 The `personal` configuration is the active Apple Silicon system. No work-host
@@ -10,18 +10,18 @@ inventoried.
 
 ## How The System Is Organized
 
-| What                       | Managed by          | Where to change it                               |
-| -------------------------- | ------------------- | ------------------------------------------------ |
-| Flake dependencies         | Nix                 | `flake.nix`, `flake.lock`                        |
-| Shared macOS behavior      | nix-darwin          | `modules/darwin/base.nix`                        |
-| macOS preferences          | nix-darwin          | `modules/darwin/defaults.nix`                    |
-| Personal apps and fonts    | nix-darwin/Homebrew | `hosts/personal/default.nix`                     |
-| Shared Homebrew casks      | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`                    |
-| Command-line tools         | Home Manager        | `modules/home/packages.nix`                      |
-| Shell, Git, and GPG        | Home Manager        | `modules/home/shell.nix`, `modules/home/git.nix` |
-| Ghostty and OpenCode files | Home Manager        | `modules/home/config-files.nix`                  |
-| Neovim package and tools   | Nix                 | `packages/neovim.nix`                            |
-| Neovim behavior            | Neovim source       | `nvim/.config/nvim/`                             |
+| What                       | Managed by          | Where to change it              |
+| -------------------------- | ------------------- | ------------------------------- |
+| Flake dependencies         | Nix                 | `flake.nix`, `flake.lock`       |
+| Shared macOS behavior      | nix-darwin          | `modules/darwin/base.nix`       |
+| macOS preferences          | nix-darwin          | `modules/darwin/defaults.nix`   |
+| Personal apps and fonts    | nix-darwin/Homebrew | `hosts/personal/default.nix`    |
+| Shared Homebrew casks      | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`   |
+| Command-line tools         | Home Manager        | `modules/home/packages.nix`     |
+| Shell, Git, GPG, and SSH   | Home Manager        | `modules/home/*.nix`            |
+| Ghostty and OpenCode files | Home Manager        | `modules/home/config-files.nix` |
+| Neovim package and tools   | Nix                 | `packages/neovim.nix`           |
+| Neovim behavior            | Neovim source       | `nvim/.config/nvim/`            |
 
 The ownership rule is:
 
@@ -33,6 +33,9 @@ The ownership rule is:
   devenv. The workstation Go toolchain is a current exception.
 - Secrets, credentials, GPG keys, application data, and game data remain local
   mutable state.
+- Private connection metadata shared between hosts comes from the private
+  assets flake. SSH keys, `known_hosts`, and host-local entries remain under
+  `~/.ssh`.
 
 ## Apply A Change
 
@@ -157,6 +160,17 @@ dependencies are part of the Nix package.
 Automatic OpenCode language-server downloads are disabled. Language servers
 must come from Nix or the current project's devenv. Credentials, caches, and
 session data remain mutable outside the Nix store.
+
+### Change SSH
+
+- Edit `modules/home/ssh.nix` for public SSH client policy.
+- Edit the private assets flake for private host definitions shared by personal
+  and future work configurations.
+- Edit `~/.ssh/config.local` for host-local entries.
+
+Home Manager owns `~/.ssh/config`. Private keys, `known_hosts`, agent state, and
+the included local configuration remain mutable and must not enter this public
+repository or a Nix derivation.
 
 ## Update Nix Dependencies
 
