@@ -21,7 +21,7 @@
       NSAutomaticDashSubstitutionEnabled = false;
       NSAutomaticPeriodSubstitutionEnabled = false;
       NSAutomaticQuoteSubstitutionEnabled = false;
-      NSAutomaticSpellingCorrectionEnabled = false;
+      NSAutomaticSpellingCorrectionEnabled = true;
       "com.apple.swipescrolldirection" = false;
     };
 
