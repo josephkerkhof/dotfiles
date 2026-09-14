@@ -1,8 +1,10 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     age
+    bash-language-server
     blueutil
     coreutils-prefixed
+    curl
     devenv
     doctl
     fastfetch
@@ -20,11 +22,13 @@
     jujutsu
     kubectl
     kubernetes-helm
+    lua-language-server
     opencode
     osv-scanner
     pkgs."poppler-utils"
     prettier
     pkgs."phpantom-lsp"
+    pyright
     ripgrep
     ruff
     silver-searcher-ng
@@ -32,7 +36,9 @@
     switchaudio-osx
     tree
     tree-sitter
+    vue-language-server
     wget
+    yaml-language-server
     yt-dlp
   ];
 

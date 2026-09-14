@@ -1,30 +1,14 @@
 -- Personal Neovim config.
 -- Started from kickstart.nvim, then cut down toward the tools I actually use.
 
-if vim.g.nix_nvim_config then
-  -- The wrapped config is authoritative even while the old Stow link exists.
-  local stow_config = vim.fn.stdpath 'config'
-  vim.opt.runtimepath:remove(stow_config)
-  vim.opt.runtimepath:remove(stow_config .. '/after')
-  local mutable_site = vim.fn.stdpath 'data' .. '/site'
-  vim.opt.runtimepath:remove(mutable_site)
-  vim.opt.runtimepath:remove(mutable_site .. '/after')
-else
-  -- Keep the Stow-managed editor usable until the coordinated Nix cutover.
-  local excluded = {
-    ['lazy.nvim'] = true,
-    ['lazydev.nvim'] = true,
-    ['mason-lspconfig.nvim'] = true,
-    ['mason-tool-installer.nvim'] = true,
-    ['mason.nvim'] = true,
-  }
-  for _, plugin in ipairs(vim.fn.glob(vim.fn.stdpath 'data' .. '/lazy/*', false, true)) do
-    if not excluded[vim.fs.basename(plugin)] then vim.opt.runtimepath:append(plugin) end
-  end
-  vim.g.nix_nvim_config = vim.fn.stdpath 'config'
-  vim.g.js_debug_adapter = 'js-debug-adapter'
-  vim.g.vue_typescript_plugin_path = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server'
-end
+assert(vim.g.nix_nvim_config, 'This Neovim configuration must run through the Nix wrapper')
+
+local user_config = vim.fn.stdpath 'config'
+vim.opt.runtimepath:remove(user_config)
+vim.opt.runtimepath:remove(user_config .. '/after')
+local mutable_site = vim.fn.stdpath 'data' .. '/site'
+vim.opt.runtimepath:remove(mutable_site)
+vim.opt.runtimepath:remove(mutable_site .. '/after')
 
 -- Set <space> as the leader key before plugins are configured.
 vim.g.mapleader = ' '

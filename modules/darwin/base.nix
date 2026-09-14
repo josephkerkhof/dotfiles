@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   username,
   ...
 }: {
@@ -21,8 +22,26 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "hm-backup";
     extraSpecialArgs = {inherit inputs username;};
     users.${username} = import ../home;
   };
+
+  # Bound rollback history after a successful activation. Store garbage
+  # collection remains a separate maintenance operation.
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    generations_to_delete="$(
+      for generation_link in /nix/var/nix/profiles/system-*-link; do
+        generation="''${generation_link##*/system-}"
+        printf '%s\n' "''${generation%-link}"
+      done | /usr/bin/sort -rn | /usr/bin/tail -n +6
+    )"
+
+    if [ -n "$generations_to_delete" ]; then
+      echo "removing system generations older than the newest five: $generations_to_delete"
+      printf '%s\n' "$generations_to_delete" | /usr/bin/xargs \
+        /nix/var/nix/profiles/default/bin/nix-env \
+          --profile /nix/var/nix/profiles/system \
+          --delete-generations
+    fi
+  '';
 }

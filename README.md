@@ -4,13 +4,9 @@ This repository is the source of truth for Joseph's macOS workstation. It uses
 Determinate Nix, nix-darwin, Home Manager, nix-homebrew, and a private font
 flake.
 
-The `personal` configuration is active and under canary evaluation. The `work`
-configuration is only a placeholder and must not be activated yet.
-
-> [!IMPORTANT]
-> `scripts/cutover-personal.sh` completed the one-time migration. It is not a
-> command for normal system management. Keep `result-personal` and do not run
-> garbage collection until the canary is accepted.
+The `personal` configuration is the active Apple Silicon system. No work-host
+output is exported; that configuration will be added only after the machine is
+inventoried.
 
 ## How The System Is Organized
 
@@ -31,7 +27,8 @@ The ownership rule is:
 
 - Nix owns workstation command-line tools and managed configuration.
 - Homebrew owns declared casks and the single `mas` formula. Most casks are GUI
-  apps; Codex, ngrok, and the font cask are current exceptions.
+  apps; Codex, ngrok, and the font cask are current exceptions. Homebrew and its
+  official taps are pinned by `flake.lock`.
 - Project runtimes, databases, and services generally belong in each project's
   devenv. The workstation Go toolchain is a current exception.
 - Secrets, credentials, GPG keys, application data, and game data remain local
@@ -52,8 +49,8 @@ nix fmt -- .
 nix flake check path:. --print-build-logs
 ```
 
-`nix flake check` evaluates and builds the personal system, the work scaffold,
-and the packaged Neovim check. It does not activate anything.
+`nix flake check` evaluates and builds the personal system and packaged Neovim.
+It does not activate anything.
 
 ### 2. Build the personal system
 
@@ -75,7 +72,9 @@ sudo -H "$system_path/activate"
 ```
 
 The first command selects the system generation. The second applies macOS,
-Homebrew, Home Manager, and user configuration.
+Homebrew, Home Manager, and user configuration. After activation succeeds, the
+system profile retains the newest five generations and removes older generation
+links.
 
 ### 4. Confirm what is running
 
@@ -119,7 +118,9 @@ explicit exception.
   personal host module.
 
 Activation installs missing declared applications. The App Store must already
-be signed in for `mas` applications.
+be signed in for `mas` applications. Existing Homebrew packages are upgraded
+from the revisions pinned in `flake.lock`; Homebrew does not update taps on its
+own.
 
 ### Remove a GUI application
 
@@ -148,6 +149,15 @@ activations.
 Neovim does not use Lazy, Mason, or runtime Treesitter downloads. Its runtime
 dependencies are part of the Nix package.
 
+### Change OpenCode
+
+- Edit `opencode/.config/opencode/` for managed OpenCode behavior.
+- Add shared formatters and language servers to `modules/home/packages.nix`.
+
+Automatic OpenCode language-server downloads are disabled. Language servers
+must come from Nix or the current project's devenv. Credentials, caches, and
+session data remain mutable outside the Nix store.
+
 ## Update Nix Dependencies
 
 Update all inputs recorded in `flake.lock`:
@@ -166,7 +176,8 @@ nix flake update nixpkgs
 
 Review the `flake.lock` diff, build, activate, and test before committing an
 update. Updating inputs can change many packages at once even when no module was
-edited.
+edited. Updating `homebrew-core` or `homebrew-cask` also changes the package
+definitions used by Homebrew during the next activation.
 
 ## Inspect And Roll Back
 
@@ -176,17 +187,15 @@ List system generations:
 sudo -H /run/current-system/sw/bin/darwin-rebuild --list-generations
 ```
 
-After confirming the previous entry is a validated post-cutover generation,
-switch to and activate it:
+After confirming the previous entry is a known-good generation, switch to and
+activate it:
 
 ```sh
 sudo -H /run/current-system/sw/bin/darwin-rebuild --rollback
 ```
 
 A generation rollback restores Nix-managed configuration only. It does not
-restore applications, services, package data, or other mutable state deleted by
-the cutover. Cutover failures use the fix-forward procedure in
-`docs/migration/personal-cutover.md` instead.
+restore applications, services, package data, or other mutable state.
 
 Rollback also does not change the Git checkout or `flake.lock`. Fix or revert
 the repository separately before the next normal activation.
@@ -198,27 +207,23 @@ readlink -f /nix/var/nix/profiles/system
 readlink -f /run/current-system
 ```
 
-## During Canary Evaluation
+## Store Maintenance
 
-- Keep the `result-personal` symlink. It is a garbage-collection root for the
-  validated build.
-- Do not run `nix store gc` yet.
-- Do not run `scripts/cutover-personal.sh` again.
-- Do not run `brew bundle` from the root `Brewfile`; it records the old
-  pre-cutover package set.
-- Record unexpected behavior before deleting application data or other mutable
-  state.
-- Use `docs/migration/` as cutover history. Current Nix modules are the source of
-  truth for ongoing configuration.
+Keep `result-personal` as the current candidate build. Successful activation
+automatically retains the newest five system generations, providing bounded
+rollback history. This does not garbage-collect unreferenced store paths.
 
-After the canary is accepted, inspect potential garbage first:
+Before collecting the store, inspect the retained generations and potential
+garbage:
 
 ```sh
+sudo -H /run/current-system/sw/bin/darwin-rebuild --list-generations
 nix store gc --dry-run
 ```
 
-Only remove old roots or generations and run garbage collection as a separate,
-intentional maintenance task.
+Garbage collection is a separate maintenance operation, not part of normal
+activation or verification. It never replaces backups for mutable application
+data, credentials, project state, or game data.
 
 ## Fresh Personal Mac
 
@@ -228,9 +233,6 @@ intentional maintenance task.
    private `nix-private-assets` repository.
 4. Clone this repository to `~/dotfiles`.
 5. Run the normal check, build, and activation workflow above.
-
-The historical personal migration procedure is documented in
-`docs/migration/personal-cutover.md`; it is not part of a fresh installation.
 
 ## Sync Neovim With kickstart.nvim
 

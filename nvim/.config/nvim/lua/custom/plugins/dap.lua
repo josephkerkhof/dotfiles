@@ -66,7 +66,7 @@ dap.configurations.php = {
     request = 'launch',
     name = 'Listen for Xdebug',
     port = 9003,
-    -- Herd runs natively, so paths match 1:1. Under Docker/Sail, add
+    -- Native project runtimes use matching paths. For containers, add
     -- pathMappings = { ['/var/www/html'] = '${workspaceFolder}' }.
   },
 }

@@ -4,16 +4,9 @@
 
 - This repository declares Joseph's macOS workstation with Determinate Nix,
   nix-darwin, Home Manager, nix-homebrew, and a private font flake.
-- `darwinConfigurations.personal` is the active Apple Silicon canary.
-- `darwinConfigurations.work` is only a scaffold. Do not activate it or infer
-  work policy until the user explicitly inventories that machine.
-- `scripts/cutover-personal.sh` is a completed one-time migration tool, not an
-  ongoing state-management command. Do not run it again unless the user
-  explicitly requests migration recovery work.
-- Files under `docs/migration/` record the cutover and may describe historical
-  pre-cutover state. Current Nix modules are authoritative for ongoing state.
-- Keep `result-personal` and avoid garbage collection until the user explicitly
-  accepts the canary.
+- `darwinConfigurations.personal` is the active Apple Silicon system.
+- No work-host output exists. Do not infer work policy or add an activatable
+  work configuration until the user explicitly inventories that machine.
 
 ## Ownership Boundaries
 
@@ -33,6 +26,8 @@ Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; Codex, ngrok, and the font cask are existing explicit exceptions.
 Do not add workstation CLI tools through Homebrew when a Nix package is
 suitable.
+Homebrew and its official taps are pinned by `flake.lock`; activation upgrades
+installed packages from those pinned definitions without updating taps.
 `homebrew.onActivation.cleanup` is `"none"`, so removing a cask declaration
 does not uninstall the application automatically. Treat app removal as a
 separate, explicit, user-approved action.
@@ -42,17 +37,14 @@ GPG keyrings, application data, credentials, project dependencies, Steam game
 data, and the optional `~/.secrets` file. Never add secret material to this
 repository or interpolate it into a Nix derivation.
 
-## Active and Legacy Paths
+## Active Paths
 
 - `ghostty/.config/ghostty/config` is active through Home Manager.
 - Tracked files under `opencode/.config/opencode/` are linked individually so
   OpenCode can retain mutable state in the same config directory.
 - `nvim/.config/nvim/` is active as source for the wrapped Nix Neovim package.
-- The root `Brewfile` describes the legacy pre-cutover package set. Do not run
-  `brew bundle` from it; doing so would reinstall removed workstation tools.
-- Root `zsh/`, `git/`, and `lazygit/` content is retained Stow-era material and
-  is not the active configuration. Change the corresponding Home Manager module
-  instead unless the user explicitly asks to maintain migration history.
+- OpenCode automatic LSP downloads are disabled. Add workstation language
+  servers through Home Manager or keep project-specific tools in devenv.
 
 ## Change Rules
 
@@ -66,7 +58,7 @@ repository or interpolate it into a Nix derivation.
   toolchain and its editor tooling are an existing exception.
 - Preserve the existing public personal Git identity and host-local private GPG
   key ownership.
-- Do not make the work scaffold activatable as a side effect of personal work.
+- Do not add a work output as a side effect of personal work.
 
 ## Build and Activation
 
@@ -81,7 +73,8 @@ nix build path:.#darwinConfigurations.personal.system --out-link result-personal
 ```
 
 Activation requires root and consists of both switching the system profile and
-running the built activation program:
+running the built activation program. Successful activation retains the newest
+five system generations:
 
 ```sh
 system_path=$(readlink -f result-personal)
@@ -113,13 +106,10 @@ terminal application's inherited environment cannot hide startup behavior:
 
 - Run `nix fmt -- .` after changing Nix files and inspect any formatter changes.
 - Run `nix flake check path:. --print-build-logs` for configuration changes.
-- Run `bash -n scripts/cutover-personal.sh` only when that historical script is
-  edited.
 - Run `git diff --check` before committing.
 - Treat activation as a separate live-system verification step. Confirm the
   relevant command, app, setting, or managed file after activation.
-- Do not garbage-collect as part of routine verification during canary
-  evaluation.
+- Keep garbage collection separate from routine activation and verification.
 
 ## Rollback and Safety
 
@@ -127,12 +117,12 @@ terminal application's inherited environment cannot hide startup behavior:
   inspect generations.
 - Use `sudo -H /run/current-system/sw/bin/darwin-rebuild --rollback` to switch
   to and activate the previous generation only after confirming it is a
-  validated post-cutover generation.
+  known-good generation.
 - A generation rollback does not roll back the Git checkout or `flake.lock`.
 - A generation rollback restores only Nix-managed state. It cannot restore apps,
-  package data, services, or other mutable state deleted during the cutover; use
-  the documented fix-forward recovery policy for cutover failures.
+  package data, services, or other mutable state.
 - Never delete mutable application data merely because an application or Nix
   package is removed.
-- Never use the migration script, legacy `Brewfile`, work configuration, or
-  garbage collection as a convenience shortcut.
+- Successful activation automatically prunes system generations older than the
+  newest five. Run garbage collection only as an intentional maintenance
+  operation.

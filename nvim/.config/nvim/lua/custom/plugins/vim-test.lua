@@ -11,7 +11,7 @@ vim.cmd [[
       let g:test#custom_strategies = {'toggleterm': function('ToggleTermStrategy')}
     ]]
 vim.g['test#strategy'] = 'toggleterm'
--- Herd runs php natively, so each project's own binary is correct.
+-- Each project supplies its own Pest binary through its development environment.
 vim.g['test#php#pest#executable'] = 'vendor/bin/pest'
 
 -- Nearest/file are inherently file-anchored. Run these from a test buffer.

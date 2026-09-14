@@ -2,6 +2,7 @@ _: {
   home = {
     sessionVariables = {
       EDITOR = "nvim";
+      OPENCODE_DISABLE_LSP_DOWNLOAD = "true";
       VISUAL = "nvim";
     };
   };
