@@ -329,11 +329,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789345725,
-        "narHash": "sha256-hMwpSvLCvP4iuRpU/gT+wqTPLs/TuZNPUK0dkpsDG3g=",
+        "lastModified": 1789346706,
+        "narHash": "sha256-VkXq05Qfm1imt3WeBm6Q2bTOE4z0TA/6SO1qBWy60XQ=",
         "ref": "refs/heads/main",
-        "rev": "fe00bacbb97bcf23fb20e1b1c514cbc88ee1157e",
-        "revCount": 2,
+        "rev": "44d0b9e1a62d83fbd4da73104e85ced173d62616",
+        "revCount": 4,
         "type": "git",
         "url": "ssh://git@github.com/josephkerkhof/nix-private-assets.git"
       },

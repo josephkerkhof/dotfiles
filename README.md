@@ -13,7 +13,7 @@ inventoried.
 | What                       | Managed by          | Where to change it              |
 | -------------------------- | ------------------- | ------------------------------- |
 | Flake dependencies         | Nix                 | `flake.nix`, `flake.lock`       |
-| Shared macOS behavior      | nix-darwin          | `modules/darwin/base.nix`       |
+| Shared macOS behavior      | nix-darwin          | `modules/darwin/*.nix`          |
 | macOS preferences          | nix-darwin          | `modules/darwin/defaults.nix`   |
 | Personal apps and fonts    | nix-darwin/Homebrew | `hosts/personal/default.nix`    |
 | Shared Homebrew casks      | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`   |
@@ -171,6 +171,13 @@ session data remain mutable outside the Nix store.
 Home Manager owns `~/.ssh/config`. Private keys, `known_hosts`, agent state, and
 the included local configuration remain mutable and must not enter this public
 repository or a Nix derivation.
+
+### Change the hosts file
+
+- Edit `modules/darwin/hosts.nix` for the public macOS hosts-file baseline.
+- Edit the private assets flake for private address mappings.
+
+nix-darwin owns `/etc/hosts`. Do not edit it directly after activation.
 
 ## Update Nix Dependencies
 

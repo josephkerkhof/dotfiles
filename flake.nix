@@ -52,6 +52,7 @@
           nix-homebrew.darwinModules.nix-homebrew
           home-manager.darwinModules.home-manager
           ./modules/darwin/base.nix
+          ./modules/darwin/hosts.nix
           ./modules/darwin/homebrew.nix
           hostModule
         ];
