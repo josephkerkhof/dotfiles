@@ -4,6 +4,7 @@
     ./ghostty.nix
     ./git.nix
     ./neovim.nix
+    ./opencode.nix
     ./packages.nix
     ./shell.nix
     ./ssh.nix

@@ -10,20 +10,20 @@ inventoried.
 
 ## How The System Is Organized
 
-| What                     | Managed by          | Where to change it              |
-| ------------------------ | ------------------- | ------------------------------- |
-| Flake dependencies       | Nix                 | `flake.nix`, `flake.lock`       |
-| Shared macOS behavior    | nix-darwin          | `modules/darwin/*.nix`          |
-| macOS preferences        | nix-darwin          | `modules/darwin/defaults.nix`   |
-| Personal apps and fonts  | nix-darwin/Homebrew | `hosts/personal/default.nix`    |
-| Shared Homebrew casks    | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`   |
-| Command-line tools       | Home Manager        | `modules/home/packages.nix`     |
-| Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`            |
-| Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`      |
-| OpenCode files           | Home Manager        | `modules/home/config-files.nix` |
-| Neovim package and tools | Nix                 | `packages/neovim.nix`           |
-| Neovim behavior          | Neovim source       | `nvim/.config/nvim/`            |
-| Workstation utility      | Nix/Home Manager    | `packages/workstation.*`        |
+| What                     | Managed by          | Where to change it            |
+| ------------------------ | ------------------- | ----------------------------- |
+| Flake dependencies       | Nix                 | `flake.nix`, `flake.lock`     |
+| Shared macOS behavior    | nix-darwin          | `modules/darwin/*.nix`        |
+| macOS preferences        | nix-darwin          | `modules/darwin/defaults.nix` |
+| Personal apps and fonts  | nix-darwin/Homebrew | `hosts/personal/default.nix`  |
+| Shared Homebrew casks    | nix-darwin/Homebrew | `modules/darwin/homebrew.nix` |
+| Command-line tools       | Home Manager        | `modules/home/packages.nix`   |
+| Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
+| Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`    |
+| OpenCode                 | Home Manager        | `modules/home/opencode.nix`   |
+| Neovim package and tools | Nix                 | `packages/neovim.nix`         |
+| Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |
+| Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
 
 The ownership rule is:
 
@@ -175,8 +175,8 @@ dependencies are part of the Nix package.
 
 ### Change OpenCode
 
-- Edit `opencode/.config/opencode/` for managed OpenCode behavior.
-- Add shared formatters and language servers to `modules/home/packages.nix`.
+- Edit `modules/home/opencode.nix` for OpenCode settings and dependencies.
+- Edit `opencode/.config/opencode/` for managed rule, command, and theme sources.
 
 Automatic OpenCode language-server downloads are disabled. Language servers
 must come from Nix or the current project's devenv. Credentials, caches, and

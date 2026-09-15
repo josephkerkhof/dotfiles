@@ -108,7 +108,8 @@
         } ''
           test_home="$TMPDIR/home"
           mkdir -p "$test_home"/{config,data,state,cache}
-          cp -R ${./opencode/.config/opencode} "$test_home/config/opencode"
+          cp -R ${self.darwinConfigurations.personal.config.home-manager.users.${username}.home.activationPackage}/home-files/.config/opencode \
+            "$test_home/config/opencode"
           chmod -R u+w "$test_home/config/opencode"
           HOME="$test_home" \
             XDG_CONFIG_HOME="$test_home/config" \
