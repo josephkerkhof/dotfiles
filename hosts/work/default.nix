@@ -14,10 +14,6 @@
 
   fonts.packages = [inputs.private-assets.packages.${pkgs.stdenv.hostPlatform.system}.berkeley-mono];
 
-  # First activation adopts the installer-based /opt/homebrew prefix.
-  # Set back to false after the first successful work activation.
-  nix-homebrew.autoMigrate = lib.mkForce true;
-
   homebrew = {
     casks = [
       "1password"

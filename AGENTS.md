@@ -84,8 +84,10 @@ remain host-local and mutable.
   toolchain and its editor tooling are an existing exception.
 - Preserve the shared public Git identity in `modules/home/git.nix`, the private
   AE include for `~/code/ae/`, and host-local private GPG key ownership.
-- `nix-homebrew.autoMigrate` is forced on only in `hosts/work` for the first
-  work activation. Remove that override afterwards.
+- `nix-homebrew.autoMigrate` is `false`. A Mac with an installer-based
+  `/opt/homebrew` needs `lib.mkForce true` in its host module for the first
+  activation only, with the old `Library/Taps` moved aside. Remove the
+  override after that activation.
 - Treat `modules/darwin` and `modules/home` as cross-host configuration. Move
   state there only after confirming that both hosts should inherit it.
 - Do not change one host as a side effect of work on the other.
