@@ -54,11 +54,13 @@
           ./modules/darwin/base.nix
           ./modules/darwin/hosts.nix
           ./modules/darwin/homebrew.nix
+          ./modules/darwin/defaults.nix
           hostModule
         ];
       };
   in {
     darwinConfigurations.personal = mkDarwin "personal" ./hosts/personal;
+    darwinConfigurations.work = mkDarwin "work" ./hosts/work;
 
     packages.aarch64-darwin = {
       neovim = import ./packages/neovim.nix {
@@ -67,12 +69,16 @@
       openai-usage = import ./packages/openai-usage.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
+      mov2web = import ./packages/mov2web.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
       workstation = import ./packages/workstation.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
     };
 
     checks.aarch64-darwin = {
+      mov2web = self.packages.aarch64-darwin.mov2web;
       neovim = self.packages.aarch64-darwin.neovim;
       openai-usage = self.packages.aarch64-darwin.openai-usage;
       neovim-startup =
@@ -121,6 +127,7 @@
           touch "$out"
         '';
       personal = self.darwinConfigurations.personal.system;
+      work = self.darwinConfigurations.work.system;
       workstation = self.packages.aarch64-darwin.workstation;
       workstation-cli =
         nixpkgs.legacyPackages.aarch64-darwin.runCommand "workstation-cli-check" {
@@ -131,6 +138,8 @@
           workstation help gc >/dev/null
           test "$(cat ${self.darwinConfigurations.personal.system}/workstation-name)" = personal
           test "$(cat ${self.darwinConfigurations.personal.system}/workstation-hostname)" = Josephs-MacBook-Pro
+          test "$(cat ${self.darwinConfigurations.work.system}/workstation-name)" = work
+          test "$(cat ${self.darwinConfigurations.work.system}/workstation-hostname)" = Active-Engagement-MacBook-Pro
           if workstation test --yes 2>/dev/null; then
             echo "invalid test options unexpectedly succeeded" >&2
             exit 1

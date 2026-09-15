@@ -1,4 +1,8 @@
-{username, ...}: {
+{
+  lib,
+  username,
+  ...
+}: {
   imports = [
     ./config-files.nix
     ./ghostty.nix
@@ -15,6 +19,10 @@
     inherit username;
     homeDirectory = "/Users/${username}";
     stateVersion = "26.05";
+
+    activation.createScreenshotDirectory = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p "$HOME/Pictures/Screenshots"
+    '';
   };
 
   programs.home-manager.enable = true;

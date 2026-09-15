@@ -4,9 +4,9 @@ This repository is the source of truth for Joseph's macOS workstation. It uses
 Determinate Nix, nix-darwin, Home Manager, nix-homebrew, and a private assets
 flake.
 
-The `personal` configuration is the active Apple Silicon system. No work-host
-output is exported; that configuration will be added only after the machine is
-inventoried.
+Two Apple Silicon hosts are declared: `personal` (Josephs-MacBook-Pro) and
+`work` (Active-Engagement-MacBook-Pro). The `workstation` command selects the
+configuration from the current hostname.
 
 ## How The System Is Organized
 
@@ -17,6 +17,9 @@ inventoried.
 | macOS preferences        | nix-darwin          | `modules/darwin/defaults.nix` |
 | Personal apps and fonts  | nix-darwin/Homebrew | `hosts/personal/default.nix`  |
 | Personal user settings   | Home Manager        | `hosts/personal/home.nix`     |
+| Work apps and fonts      | nix-darwin/Homebrew | `hosts/work/default.nix`      |
+| Work user packages       | Home Manager        | `hosts/work/home.nix`         |
+| Work-private Git and SSH | Private assets      | `homeModules.work` (private)  |
 | Shared Homebrew casks    | nix-darwin/Homebrew | `modules/darwin/homebrew.nix` |
 | Command-line tools       | Home Manager        | `modules/home/packages.nix`   |
 | Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
@@ -25,6 +28,7 @@ inventoried.
 | Neovim package and tools | Nix                 | `packages/neovim.nix`         |
 | Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |
 | Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
+| Screen-recording convert | Nix/Home Manager    | `packages/mov2web.*`          |
 
 The ownership rule is:
 
@@ -38,9 +42,14 @@ The ownership rule is:
   devenv. The workstation Go toolchain is a current exception.
 - Secrets, credentials, GPG keys, application data, and game data remain local
   mutable state.
-- Private connection metadata shared between hosts comes from the private
-  assets flake. SSH keys, `known_hosts`, and host-local entries remain under
-  `~/.ssh`.
+- The public Git identity is shared by both hosts in `modules/home/git.nix`.
+  The work identity for `~/code/ae/` is a conditional include from the private
+  assets flake.
+- Private connection metadata comes from the private assets flake: the
+  `homestar` modules for both hosts, the `work` home module for the work Mac
+  only. SSH keys, `known_hosts`, and host-local entries remain under `~/.ssh`.
+- On the work Mac, Rippling MDM, UniFi Endpoint, and internal app builds stay
+  unmanaged.
 - MakeMKV remains an imperative personal installation because nixpkgs supports
   it only on Linux and Homebrew disabled its macOS cask for failing Gatekeeper.
 
@@ -142,9 +151,10 @@ explicit exception.
 ### Add a GUI application
 
 - Add a personal-only cask to `hosts/personal/default.nix`.
+- Add a work-only cask to `hosts/work/default.nix`.
 - Add a genuinely shared cask to `modules/darwin/homebrew.nix`.
 - Add an App Store application and its numeric ID to `homebrew.masApps` in the
-  personal host module.
+  host module.
 
 Activation installs missing declared applications. The App Store must already
 be signed in for `mas` applications. Existing Homebrew packages are upgraded
@@ -190,8 +200,8 @@ session data remain mutable outside the Nix store.
 ### Change SSH
 
 - Edit `modules/home/ssh.nix` for public SSH client policy.
-- Edit the private assets flake for private host definitions shared by personal
-  and future work configurations.
+- Edit the private assets flake for private host definitions: `homestar` for
+  both hosts, `work` for the work Mac only.
 - Edit `~/.ssh/config.local` for host-local entries.
 
 Home Manager owns `~/.ssh/config`. Private keys, `known_hosts`, agent state, and
@@ -220,6 +230,10 @@ Update one input, such as nixpkgs:
 ```sh
 nix flake update nixpkgs
 ```
+
+Determinate Nix resolves the nixpkgs input through FlakeHub. The lock follows
+the newest FlakeHub `0.2605` revision, which can lag the GitHub branch by days.
+An update that changes nothing means FlakeHub has not advanced.
 
 Review the `flake.lock` diff, build, activate, and test before committing an
 update. Updating inputs can change many packages at once even when no module was
@@ -256,7 +270,7 @@ readlink -f /run/current-system
 
 ## Store Maintenance
 
-Keep `result-personal` as the current candidate build. Successful activation
+Keep `result-<workstation>` as the current candidate build. Successful activation
 automatically retains the newest five system generations, providing bounded
 rollback history. This does not garbage-collect unreferenced store paths.
 
@@ -273,14 +287,15 @@ but skips the final confirmation. Garbage collection is not scoped by
 never replaces backups for mutable application data, credentials, project
 state, or game data.
 
-## Fresh Personal Mac
+## Fresh Mac
 
 1. Install the Xcode Command Line Tools and Determinate Nix.
 2. Sign in to the App Store.
 3. Restore the host-local GPG key and configure SSH access to GitHub and the
    private `nix-private-assets` repository.
 4. Clone this repository to `~/dotfiles`.
-5. Run the normal check, build, and activation workflow above.
+5. Run the normal check, build, and activation workflow above. The utility
+   selects `personal` or `work` from the hostname.
 
 ## Sync Neovim With kickstart.nvim
 

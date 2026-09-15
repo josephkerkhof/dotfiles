@@ -23,8 +23,15 @@
 
       settings = {
         core.editor = "nvim";
+        init.defaultBranch = "main";
         push.autoSetupRemote = true;
-        user.useConfigOnly = true;
+        commit.gpgSign = true;
+        user = {
+          name = "Joseph Kerkhof";
+          email = "joseph@kerkhof.dev";
+          signingKey = "51C7FCE5909B5D1F80813F0671A696CAC91CEA76";
+          useConfigOnly = true;
+        };
       };
     };
   };

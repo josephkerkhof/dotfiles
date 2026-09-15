@@ -4,9 +4,12 @@
 
 - This repository declares Joseph's macOS workstation with Determinate Nix,
   nix-darwin, Home Manager, nix-homebrew, and a private assets flake.
-- `darwinConfigurations.personal` is the active Apple Silicon system.
-- No work-host output exists. Do not infer work policy or add an activatable
-  work configuration until the user explicitly inventories that machine.
+- `darwinConfigurations.personal` is the personal Apple Silicon system
+  (Josephs-MacBook-Pro).
+- `darwinConfigurations.work` is the work Apple Silicon system
+  (Active-Engagement-MacBook-Pro), enrolled in Rippling MDM.
+- Work-private state (the AE Git identity for `~/code/ae/`, work SSH hosts)
+  lives in the private assets flake as `homeModules.work`. Never add it here.
 
 ## Ownership Boundaries
 
@@ -15,14 +18,20 @@
 | Flake inputs and outputs                     | Nix flake           | `flake.nix`, `flake.lock`                                   |
 | Shared Darwin behavior                       | nix-darwin          | `modules/darwin/*.nix`                                      |
 | Shared casks and Homebrew policy             | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`                               |
-| Personal apps, identity, fonts, and defaults | Personal host       | `hosts/personal/default.nix`, `modules/darwin/defaults.nix` |
+| Shared macOS defaults and security           | nix-darwin          | `modules/darwin/defaults.nix`                               |
+| Shared Git identity and GPG signing          | Home Manager        | `modules/home/git.nix`                                      |
+| Personal apps and fonts                      | Personal host       | `hosts/personal/default.nix`                                |
 | Personal user configuration                  | Home Manager        | `hosts/personal/home.nix`                                   |
+| Work apps, fonts, and Homebrew migration     | Work host           | `hosts/work/default.nix`                                    |
+| Work user packages and aliases               | Home Manager        | `hosts/work/home.nix`                                       |
+| Work-private Git include and SSH hosts       | Private assets      | `homeModules.work` in `nix-private-assets`                  |
 | User CLI packages                            | Home Manager        | `modules/home/packages.nix`                                 |
 | Shell, Git, GPG, SSH, and managed files      | Home Manager        | `modules/home/*.nix`                                        |
 | Neovim package, plugins, parsers, and tools  | Nix                 | `packages/neovim.nix`                                       |
 | Neovim behavior                              | Packaged source     | `nvim/.config/nvim/`                                        |
 | Project runtimes and services                | Project devenv      | Outside this workstation profile                            |
 | Workstation lifecycle utility                | Nix/Home Manager    | `packages/workstation.*`, `modules/home/packages.nix`       |
+| Screen-recording converter (work)            | Nix/Home Manager    | `packages/mov2web.*`, `hosts/work/home.nix`                 |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; Codex, ngrok, and the font cask are existing explicit exceptions.
@@ -35,13 +44,18 @@ installed packages from those pinned definitions without updating taps.
 `homebrew.onActivation.cleanup` is `"none"`, so removing a cask declaration
 does not uninstall the application automatically. Treat app removal as a
 separate, explicit, user-approved action.
+On the work Mac, Rippling MDM, UniFi Endpoint, and internal app builds such as
+Capsule stay unmanaged. Never declare them. `claude-code` is unfree; the work
+host allows it by name with `allowUnfreePredicate`. Extend that list rather
+than enabling all unfree packages.
 
 Host-local mutable state must stay outside the Nix store. This includes secrets,
 GPG keyrings, application data, credentials, project dependencies, Steam game
 data, and the optional `~/.secrets` file. Never add secret material to this
 repository or interpolate it into a Nix derivation.
-Private infrastructure metadata shared between hosts belongs in the private
-assets flake. SSH keys, `known_hosts`, agent state, and `~/.ssh/config.local`
+Private infrastructure metadata belongs in the private assets flake: the
+`homestar` modules for both hosts, `homeModules.work` for the work Mac only.
+SSH keys, `known_hosts`, agent state, and `~/.ssh/config.local`
 remain host-local and mutable.
 
 ## Active Paths
@@ -60,19 +74,21 @@ remain host-local and mutable.
 ## Change Rules
 
 - Add shared CLI packages to `modules/home/packages.nix`.
-- Add personal-only Home Manager state to `hosts/personal/home.nix`.
-- Add an app used only on the personal Mac to the Homebrew block in
-  `hosts/personal/default.nix`.
+- Add personal-only Home Manager state to `hosts/personal/home.nix` and
+  work-only state to `hosts/work/home.nix`.
+- Add an app used only on one Mac to the Homebrew block of that host module.
 - Add a genuinely cross-host cask to `modules/darwin/homebrew.nix`.
 - Add Mac App Store applications by ID to `homebrew.masApps` in the host module.
 - Keep language runtimes, databases, and services project-scoped through
   devenv unless the user explicitly changes that policy. The global Go
   toolchain and its editor tooling are an existing exception.
-- Preserve the existing public personal Git identity and host-local private GPG
-  key ownership.
+- Preserve the shared public Git identity in `modules/home/git.nix`, the private
+  AE include for `~/code/ae/`, and host-local private GPG key ownership.
+- `nix-homebrew.autoMigrate` is forced on only in `hosts/work` for the first
+  work activation. Remove that override afterwards.
 - Treat `modules/darwin` and `modules/home` as cross-host configuration. Move
   state there only after confirming that both hosts should inherit it.
-- Do not add a work output as a side effect of personal work.
+- Do not change one host as a side effect of work on the other.
 
 ## Build and Activation
 
@@ -87,8 +103,11 @@ must preserve the underlying privilege and verification boundaries below.
 ```sh
 nix fmt -- .
 nix flake check path:. --print-build-logs
-nix build path:.#darwinConfigurations.personal.system --out-link result-personal
+nix build path:.#darwinConfigurations.<workstation>.system --out-link result-<workstation>
 ```
+
+The nixpkgs input resolves through FlakeHub; `nix flake update nixpkgs` follows
+the newest FlakeHub `0.2605` revision and may change nothing.
 
 Activation requires root and consists of both switching the system profile and
 running the built activation program. Successful activation retains the newest

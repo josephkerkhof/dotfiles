@@ -4,8 +4,6 @@
   username,
   ...
 }: {
-  imports = [../../modules/darwin/defaults.nix];
-
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   networking.hostName = "Josephs-MacBook-Pro";
@@ -34,19 +32,7 @@
     };
   };
 
-  home-manager.users.${username} = {
-    imports = [./home.nix];
-
-    programs.git.settings = {
-      init.defaultBranch = "main";
-      user = {
-        name = "Joseph Kerkhof";
-        email = "joseph@kerkhof.dev";
-        signingKey = "51C7FCE5909B5D1F80813F0671A696CAC91CEA76";
-      };
-      commit.gpgSign = true;
-    };
-  };
+  home-manager.users.${username}.imports = [./home.nix];
 
   # Host-specific packages and preferences belong here as they are discovered.
   environment.systemPackages = [];
