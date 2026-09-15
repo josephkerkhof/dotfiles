@@ -23,6 +23,7 @@
     jq
     kubectl
     kubernetes-helm
+    nodejs
     osv-scanner
     pkgs."poppler-utils"
     ripgrep

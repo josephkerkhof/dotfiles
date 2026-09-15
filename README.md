@@ -39,7 +39,8 @@ The ownership rule is:
   apps; Codex, ngrok, and the font cask are current exceptions. Homebrew and its
   official taps are pinned by `flake.lock`.
 - Project runtimes, databases, and services generally belong in each project's
-  devenv. The workstation Go toolchain is a current exception.
+  devenv. Two workstation exceptions: the Go toolchain, and Node.js for MCP
+  servers that Claude Code starts through `npx`.
 - Secrets, credentials, GPG keys, application data, and game data remain local
   mutable state.
 - The public Git identity is shared by both hosts in `modules/home/git.nix`.
@@ -145,8 +146,8 @@ activation workflow.
 
 Do not install workstation CLI tools with Homebrew when a suitable Nix package
 exists. Language runtimes and databases should usually be added to a project's
-devenv instead; Go and its editor tools are currently installed globally as an
-explicit exception.
+devenv instead. Go with its editor tools and Node.js for `npx`-launched MCP
+servers are the explicit global exceptions.
 
 ### Add a GUI application
 
