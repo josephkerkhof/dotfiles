@@ -80,5 +80,11 @@
     jujutsu.enable = true;
   };
 
-  xdg.configFile.htop.force = true;
+  xdg.configFile = {
+    htop.enable = false;
+    "htop/htoprc" = {
+      force = true;
+      source = "${config.xdg.configFile.htop.source}/htoprc";
+    };
+  };
 }
