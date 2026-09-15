@@ -5,8 +5,6 @@ _: {
   };
 
   xdg.configFile = {
-    "ghostty/config".source = ../../ghostty/.config/ghostty/config;
-
     "opencode/opencode.jsonc".source = ../../opencode/.config/opencode/opencode.jsonc;
     "opencode/tui.jsonc".source = ../../opencode/.config/opencode/tui.jsonc;
     "opencode/commands/openai-usage.md".source = ../../opencode/.config/opencode/commands/openai-usage.md;

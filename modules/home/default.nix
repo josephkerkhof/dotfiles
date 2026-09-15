@@ -1,6 +1,7 @@
 {username, ...}: {
   imports = [
     ./config-files.nix
+    ./ghostty.nix
     ./git.nix
     ./neovim.nix
     ./packages.nix

@@ -43,7 +43,7 @@ remain host-local and mutable.
 
 ## Active Paths
 
-- `ghostty/.config/ghostty/config` is active through Home Manager.
+- Ghostty is installed through Homebrew and configured through Home Manager.
 - Tracked files under `opencode/.config/opencode/` are linked individually so
   OpenCode can retain mutable state in the same config directory.
 - `nvim/.config/nvim/` is active as source for the wrapped Nix Neovim package.
