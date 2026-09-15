@@ -1,8 +1,4 @@
-{lib, ...}: {
-  home.activation.createScreenshotDirectory = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    $DRY_RUN_CMD mkdir -p "$HOME/Pictures/Screenshots"
-  '';
-
+_: {
   programs.lazygit = {
     enable = true;
     settings.os.editPreset = "nvim-remote";
