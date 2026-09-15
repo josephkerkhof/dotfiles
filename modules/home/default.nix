@@ -6,6 +6,7 @@
     ./neovim.nix
     ./opencode.nix
     ./packages.nix
+    ./programs.nix
     ./shell.nix
     ./ssh.nix
   ];

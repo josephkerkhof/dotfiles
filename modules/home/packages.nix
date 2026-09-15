@@ -14,17 +14,14 @@
     doctl
     fastfetch
     ffmpeg
-    git-lfs
     glow
     go
     gomodifytags
     gopls
     gotests
     gotools
-    htop
     impl
     jq
-    jujutsu
     kubectl
     kubernetes-helm
     osv-scanner
