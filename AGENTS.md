@@ -16,6 +16,7 @@
 | Shared Darwin behavior                       | nix-darwin          | `modules/darwin/*.nix`                                      |
 | Shared casks and Homebrew policy             | nix-darwin/Homebrew | `modules/darwin/homebrew.nix`                               |
 | Personal apps, identity, fonts, and defaults | Personal host       | `hosts/personal/default.nix`, `modules/darwin/defaults.nix` |
+| Personal user configuration                  | Home Manager        | `hosts/personal/home.nix`                                   |
 | User CLI packages                            | Home Manager        | `modules/home/packages.nix`                                 |
 | Shell, Git, GPG, SSH, and managed files      | Home Manager        | `modules/home/*.nix`                                        |
 | Neovim package, plugins, parsers, and tools  | Nix                 | `packages/neovim.nix`                                       |
@@ -27,6 +28,8 @@ Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; Codex, ngrok, and the font cask are existing explicit exceptions.
 Do not add workstation CLI tools through Homebrew when a Nix package is
 suitable.
+MakeMKV is an imperative personal exception: nixpkgs supports it only on Linux,
+and Homebrew disabled its macOS cask because it does not pass Gatekeeper.
 Homebrew and its official taps are pinned by `flake.lock`; activation upgrades
 installed packages from those pinned definitions without updating taps.
 `homebrew.onActivation.cleanup` is `"none"`, so removing a cask declaration
@@ -57,6 +60,7 @@ remain host-local and mutable.
 ## Change Rules
 
 - Add shared CLI packages to `modules/home/packages.nix`.
+- Add personal-only Home Manager state to `hosts/personal/home.nix`.
 - Add an app used only on the personal Mac to the Homebrew block in
   `hosts/personal/default.nix`.
 - Add a genuinely cross-host cask to `modules/darwin/homebrew.nix`.
@@ -66,6 +70,8 @@ remain host-local and mutable.
   toolchain and its editor tooling are an existing exception.
 - Preserve the existing public personal Git identity and host-local private GPG
   key ownership.
+- Treat `modules/darwin` and `modules/home` as cross-host configuration. Move
+  state there only after confirming that both hosts should inherit it.
 - Do not add a work output as a side effect of personal work.
 
 ## Build and Activation

@@ -16,6 +16,7 @@ inventoried.
 | Shared macOS behavior    | nix-darwin          | `modules/darwin/*.nix`        |
 | macOS preferences        | nix-darwin          | `modules/darwin/defaults.nix` |
 | Personal apps and fonts  | nix-darwin/Homebrew | `hosts/personal/default.nix`  |
+| Personal user settings   | Home Manager        | `hosts/personal/home.nix`     |
 | Shared Homebrew casks    | nix-darwin/Homebrew | `modules/darwin/homebrew.nix` |
 | Command-line tools       | Home Manager        | `modules/home/packages.nix`   |
 | Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
@@ -27,6 +28,8 @@ inventoried.
 
 The ownership rule is:
 
+- Files under `modules/darwin` and `modules/home` are shared by every declared
+  host. Host-specific system and user state belongs under `hosts/<name>`.
 - Nix owns workstation command-line tools and managed configuration.
 - Homebrew owns declared casks and the single `mas` formula. Most casks are GUI
   apps; Codex, ngrok, and the font cask are current exceptions. Homebrew and its
@@ -38,6 +41,8 @@ The ownership rule is:
 - Private connection metadata shared between hosts comes from the private
   assets flake. SSH keys, `known_hosts`, and host-local entries remain under
   `~/.ssh`.
+- MakeMKV remains an imperative personal installation because nixpkgs supports
+  it only on Linux and Homebrew disabled its macOS cask for failing Gatekeeper.
 
 ## Apply A Change
 
