@@ -8,6 +8,7 @@
     ./ghostty.nix
     ./git.nix
     ./neovim.nix
+    ./obs.nix
     ./opencode.nix
     ./packages.nix
     ./programs.nix
@@ -26,5 +27,6 @@
   };
 
   programs.home-manager.enable = true;
+  workstation.obs.enable = true;
   xdg.enable = true;
 }

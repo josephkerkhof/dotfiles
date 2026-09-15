@@ -24,6 +24,7 @@ configuration from the current hostname.
 | Command-line tools       | Home Manager        | `modules/home/packages.nix`   |
 | Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
 | Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`    |
+| OBS screencast scenes    | Home Manager/Brew   | `modules/home/obs.nix`        |
 | OpenCode                 | Home Manager        | `modules/home/opencode.nix`   |
 | Neovim package and tools | Nix                 | `packages/neovim.nix`         |
 | Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |

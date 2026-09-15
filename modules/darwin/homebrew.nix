@@ -32,6 +32,7 @@
       "font-hack-nerd-font"
       "ghostty"
       "ngrok"
+      "obs"
       "vlc"
     ];
 

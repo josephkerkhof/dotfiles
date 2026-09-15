@@ -32,6 +32,7 @@
 | Project runtimes and services                | Project devenv      | Outside this workstation profile                            |
 | Workstation lifecycle utility                | Nix/Home Manager    | `packages/workstation.*`, `modules/home/packages.nix`       |
 | Screen-recording converter (work)            | Nix/Home Manager    | `packages/mov2web.*`, `hosts/work/home.nix`                 |
+| OBS screencast scenes and profile            | Home Manager        | `modules/home/obs.nix`, `hosts/*/home.nix`                  |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; Codex, ngrok, and the font cask are existing explicit exceptions.
@@ -61,6 +62,10 @@ remain host-local and mutable.
 ## Active Paths
 
 - Ghostty is installed through Homebrew and configured through Home Manager.
+- OBS is installed through Homebrew. Home Manager copies the generated
+  `Screencast` scene collection and profile into the OBS config directory on
+  every activation, so edits to that collection do not persist. Per-host
+  display, camera, and microphone IDs live in `hosts/*/home.nix`.
 - OpenCode is installed and configured through Home Manager. Its managed rule,
   command, and theme sources coexist with mutable state in its config directory.
 - `nvim/.config/nvim/` is active as source for the wrapped Nix Neovim package.
