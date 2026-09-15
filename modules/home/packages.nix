@@ -10,7 +10,6 @@
     cloudflared
     coreutils-prefixed
     curl
-    devenv
     doctl
     fastfetch
     ffmpeg

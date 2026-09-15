@@ -14,6 +14,11 @@ _: {
       nix-direnv.enable = true;
     };
 
+    devenv = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
     starship = {
       enable = true;
       enableZshIntegration = true;
@@ -22,10 +27,16 @@ _: {
     zsh = {
       enable = true;
       enableCompletion = true;
+      defaultKeymap = "viins";
       completionInit = ''
         mkdir -p "$XDG_CACHE_HOME/zsh"
         autoload -U compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
       '';
+      localVariables.KEYTIMEOUT = 10;
+      setOptions = [
+        "COMPLETE_ALIASES"
+        "INC_APPEND_HISTORY"
+      ];
       syntaxHighlighting.enable = true;
 
       history = {
@@ -40,10 +51,6 @@ _: {
       initContent = ''
         zstyle ':completion:*' menu select
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-        setopt COMPLETE_ALIASES INC_APPEND_HISTORY
-
-        bindkey -v
-        export KEYTIMEOUT=10
 
         function zle-keymap-select {
           if [[ $KEYMAP == vicmd ]] || [[ $1 == block ]]; then
@@ -66,9 +73,6 @@ _: {
         }
         zle -N _paste-from-normal-mode
         bindkey -M vicmd '^[[200~' _paste-from-normal-mode
-
-        # devenv auto-activation
-        eval "$(devenv hook zsh)"
       '';
     };
   };
