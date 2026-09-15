@@ -64,6 +64,9 @@
       neovim = import ./packages/neovim.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
+      openai-usage = import ./packages/openai-usage.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
       workstation = import ./packages/workstation.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
@@ -71,6 +74,7 @@
 
     checks.aarch64-darwin = {
       neovim = self.packages.aarch64-darwin.neovim;
+      openai-usage = self.packages.aarch64-darwin.openai-usage;
       neovim-startup =
         nixpkgs.legacyPackages.aarch64-darwin.runCommand "neovim-startup-check" {
           nativeBuildInputs = [self.packages.aarch64-darwin.neovim];
