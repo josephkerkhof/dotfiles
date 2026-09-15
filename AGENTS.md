@@ -44,8 +44,8 @@ installed packages from those pinned definitions without updating taps.
 `homebrew.onActivation.cleanup` is `"none"`, so removing a cask declaration
 does not uninstall the application automatically. Treat app removal as a
 separate, explicit, user-approved action.
-On the work Mac, Rippling MDM, UniFi Endpoint, and internal app builds such as
-Capsule stay unmanaged. Never declare them. `claude-code` is unfree; the work
+On the work Mac, Rippling MDM, UniFi Endpoint, Zoom, and internal app builds
+such as Capsule stay unmanaged. Never declare them. `claude-code` is unfree; the work
 host allows it by name with `allowUnfreePredicate`. Extend that list rather
 than enabling all unfree packages.
 

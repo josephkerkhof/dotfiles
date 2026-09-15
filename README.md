@@ -48,8 +48,8 @@ The ownership rule is:
 - Private connection metadata comes from the private assets flake: the
   `homestar` modules for both hosts, the `work` home module for the work Mac
   only. SSH keys, `known_hosts`, and host-local entries remain under `~/.ssh`.
-- On the work Mac, Rippling MDM, UniFi Endpoint, and internal app builds stay
-  unmanaged.
+- On the work Mac, Rippling MDM, UniFi Endpoint, Zoom, and internal app builds
+  stay unmanaged.
 - MakeMKV remains an imperative personal installation because nixpkgs supports
   it only on Linux and Homebrew disabled its macOS cask for failing Gatekeeper.
 

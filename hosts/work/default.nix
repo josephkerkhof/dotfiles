@@ -24,7 +24,6 @@
       "brave-browser"
       "claude"
       "discord"
-      "docker-desktop"
       "elgato-control-center"
       "google-chrome"
       "intellij-idea"
@@ -32,7 +31,6 @@
       "slack"
       "soundsource"
       "steam"
-      "zoom"
     ];
     brews = ["mas"];
     masApps = {
