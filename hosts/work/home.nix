@@ -6,6 +6,7 @@
   home.packages = [
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mov2web
     pkgs.claude-code
+    pkgs.ipmitool
   ];
 
   programs.zsh.shellAliases.ae = "cd ~/code/ae";
