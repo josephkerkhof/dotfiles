@@ -5,6 +5,7 @@
 }: {
   home.packages = [
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mov2web
+    pkgs.bun
     pkgs.claude-code
     pkgs.ipmitool
   ];
