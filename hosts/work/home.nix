@@ -8,6 +8,7 @@
     pkgs.bun
     pkgs.claude-code
     pkgs.ipmitool
+    pkgs.pnpm
   ];
 
   programs.zsh = {
