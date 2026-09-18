@@ -85,9 +85,10 @@ remain host-local and mutable.
 - Add a genuinely cross-host cask to `modules/darwin/homebrew.nix`.
 - Add Mac App Store applications by ID to `homebrew.masApps` in the host module.
 - Keep language runtimes, databases, and services project-scoped through
-  devenv unless the user explicitly changes that policy. Two exceptions are
-  global: the Go toolchain with its editor tooling, and Node.js, which Claude
-  Code MCP servers launch through `npx`.
+  devenv unless the user explicitly changes that policy. Three exceptions are
+  global: the Go toolchain with its editor tooling, Node.js, which Claude Code
+  MCP servers launch through `npx`, and the MySQL client tools (`mysql` and
+  `mysqlsh`) for connecting to remote databases.
 - Preserve the shared public Git identity in `modules/home/git.nix`, the private
   AE include for `~/code/ae/`, and host-local private GPG key ownership.
 - `nix-homebrew.autoMigrate` is `false`. A Mac with an installer-based
