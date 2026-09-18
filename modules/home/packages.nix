@@ -23,7 +23,6 @@
     jq
     kubectl
     kubernetes-helm
-    mysql-shell
     mysql84
     nodejs
     osv-scanner
