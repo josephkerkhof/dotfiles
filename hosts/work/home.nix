@@ -9,7 +9,15 @@
     pkgs.ipmitool
   ];
 
-  programs.zsh.shellAliases.ae = "cd ~/code/ae";
+  programs.zsh = {
+    shellAliases.ae = "cd ~/code/ae";
+
+    # Laravel Herd (work only) maintains ~/.zshrc with its PATH and per-PHP-version
+    # ini vars. ZDOTDIR bypasses that file, so source it here.
+    initContent = ''
+      [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
+    '';
+  };
 
   workstation.obs = {
     display = "B9513351-D18D-4F08-B10C-64FDA5708EFD";
