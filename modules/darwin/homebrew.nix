@@ -31,6 +31,7 @@
       "codex"
       "font-hack-nerd-font"
       "ghostty"
+      "intellij-idea"
       "ngrok"
       "obs"
       "vlc"

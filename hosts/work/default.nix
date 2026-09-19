@@ -22,7 +22,6 @@
       "discord"
       "elgato-control-center"
       "google-chrome"
-      "intellij-idea"
       "linear-linear"
       "slack"
       "soundsource"
