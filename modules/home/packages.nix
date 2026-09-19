@@ -8,6 +8,7 @@
     age
     blueutil
     cloudflared
+    codex
     coreutils-prefixed
     curl
     doctl
