@@ -6,9 +6,12 @@
   home.packages = [
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mov2web
     pkgs.bun
+    pkgs.cargo
     pkgs.claude-code
     pkgs.ipmitool
     pkgs.pnpm
+    pkgs.rustc
+    pkgs.rustfmt
   ];
 
   programs.zsh = {
