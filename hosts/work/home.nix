@@ -15,7 +15,10 @@
   ];
 
   programs.zsh = {
-    shellAliases.ae = "cd ~/code/ae";
+    shellAliases = {
+      ae = "cd ~/code/ae";
+      sail = "sh $([ -f sail ] && echo sail || echo vendor/bin/sail)";
+    };
 
     # Laravel Herd (work only) maintains ~/.zshrc with its PATH and per-PHP-version
     # ini vars. ZDOTDIR bypasses that file, so source it here.
