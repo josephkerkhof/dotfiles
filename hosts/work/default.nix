@@ -20,6 +20,7 @@
       "brave-browser"
       "claude"
       "discord"
+      "docker-desktop"
       "elgato-control-center"
       "google-chrome"
       "linear-linear"
