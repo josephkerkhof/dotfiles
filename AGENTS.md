@@ -35,7 +35,7 @@
 | OBS screencast scenes and profile            | Home Manager        | `modules/home/obs.nix`, `hosts/*/home.nix`                  |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
-applications; Codex, ngrok, and the font cask are existing explicit exceptions.
+applications; ngrok, and the font cask are existing explicit exceptions.
 Do not add workstation CLI tools through Homebrew when a Nix package is
 suitable.
 MakeMKV is an imperative personal exception: nixpkgs supports it only on Linux,

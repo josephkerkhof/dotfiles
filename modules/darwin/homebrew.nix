@@ -28,7 +28,6 @@
     casks = [
       "bruno"
       "caffeine"
-      "codex"
       "font-hack-nerd-font"
       "ghostty"
       "intellij-idea"

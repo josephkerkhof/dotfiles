@@ -37,7 +37,7 @@ The ownership rule is:
   host. Host-specific system and user state belongs under `hosts/<name>`.
 - Nix owns workstation command-line tools and managed configuration.
 - Homebrew owns declared casks and the single `mas` formula. Most casks are GUI
-  apps; Codex, ngrok, and the font cask are current exceptions. Homebrew and its
+  apps; ngrok, and the font cask are current exceptions. Homebrew and its
   official taps are pinned by `flake.lock`.
 - Project runtimes, databases, and services generally belong in each project's
   devenv. Three workstation exceptions: the Go toolchain, Node.js for MCP
