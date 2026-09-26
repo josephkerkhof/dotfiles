@@ -31,6 +31,7 @@
       "font-hack-nerd-font"
       "ghostty"
       "intellij-idea"
+      "netnewswire"
       "ngrok"
       "obs"
       "vlc"
