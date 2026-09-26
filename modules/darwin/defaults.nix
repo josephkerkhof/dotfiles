@@ -39,7 +39,16 @@
       ShowRemovableMediaOnDesktop = true;
     };
 
-    CustomUserPreferences."com.apple.driver.AppleBluetoothMultitouch.mouse".MouseButtonMode = "TwoButton";
+    CustomUserPreferences = {
+      "com.apple.AppleMultitouchMouse" = {
+        MouseButtonMode = "TwoButton";
+        MouseOneFingerDoubleTapGesture = 1;
+      };
+      "com.apple.driver.AppleBluetoothMultitouch.mouse" = {
+        MouseButtonMode = "TwoButton";
+        MouseOneFingerDoubleTapGesture = 1;
+      };
+    };
 
     screencapture = {
       disable-shadow = true;
