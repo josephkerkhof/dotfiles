@@ -39,6 +39,8 @@
       ShowRemovableMediaOnDesktop = true;
     };
 
+    CustomUserPreferences."com.apple.driver.AppleBluetoothMultitouch.mouse".MouseButtonMode = "TwoButton";
+
     screencapture = {
       disable-shadow = true;
       location = "/Users/${username}/Pictures/Screenshots";
