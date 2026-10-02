@@ -12,6 +12,7 @@ in {
   home = {
     packages = [
       inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mov2web
+      pkgs.awscli2
       pkgs.bun
       pkgs.cargo
       pkgs.claude-code
