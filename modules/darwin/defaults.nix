@@ -15,6 +15,7 @@
   system.defaults = {
     NSGlobalDomain = {
       ApplePressAndHoldEnabled = false;
+      AppleEnableSwipeNavigateWithScrolls = true;
       InitialKeyRepeat = 15;
       KeyRepeat = 2;
       NSAutomaticCapitalizationEnabled = false;
