@@ -14,6 +14,8 @@
 
   system.defaults = {
     NSGlobalDomain = {
+      AppleEnableMouseSwipeNavigateWithScrolls = true;
+      AppleEnableSwipeNavigateWithScrolls = true;
       ApplePressAndHoldEnabled = false;
       InitialKeyRepeat = 15;
       KeyRepeat = 2;
@@ -43,10 +45,12 @@
       "com.apple.AppleMultitouchMouse" = {
         MouseButtonMode = "TwoButton";
         MouseOneFingerDoubleTapGesture = 1;
+        MouseTwoFingerHorizSwipeGesture = 0;
       };
       "com.apple.driver.AppleBluetoothMultitouch.mouse" = {
         MouseButtonMode = "TwoButton";
         MouseOneFingerDoubleTapGesture = 1;
+        MouseTwoFingerHorizSwipeGesture = 0;
       };
     };
 
