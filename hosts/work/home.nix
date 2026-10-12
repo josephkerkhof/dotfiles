@@ -20,6 +20,7 @@ in {
       pkgs.pnpm
       pkgs.rustc
       pkgs.rustfmt
+      pkgs.wrangler
     ];
 
     sessionVariables.RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
