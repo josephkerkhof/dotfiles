@@ -69,6 +69,9 @@
       openai-usage = import ./packages/openai-usage.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
+      opencode-v2 = import ./packages/opencode-v2.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
       mov2web = import ./packages/mov2web.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
@@ -81,6 +84,7 @@
       mov2web = self.packages.aarch64-darwin.mov2web;
       neovim = self.packages.aarch64-darwin.neovim;
       openai-usage = self.packages.aarch64-darwin.openai-usage;
+      opencode-v2 = self.packages.aarch64-darwin.opencode-v2;
       neovim-startup =
         nixpkgs.legacyPackages.aarch64-darwin.runCommand "neovim-startup-check" {
           nativeBuildInputs = [self.packages.aarch64-darwin.neovim];
@@ -110,7 +114,7 @@
         '';
       opencode-config =
         nixpkgs.legacyPackages.aarch64-darwin.runCommand "opencode-config-check" {
-          nativeBuildInputs = [nixpkgs.legacyPackages.aarch64-darwin.opencode];
+          nativeBuildInputs = [self.packages.aarch64-darwin.opencode-v2];
         } ''
           test_home="$TMPDIR/home"
           mkdir -p "$test_home"/{config,data,state,cache}

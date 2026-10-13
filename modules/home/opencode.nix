@@ -5,6 +5,7 @@
 }: {
   programs.opencode = {
     enable = true;
+    package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-v2;
 
     extraPackages = with pkgs; [
       inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.openai-usage
@@ -98,19 +99,21 @@
       };
     };
 
-    tui = {
-      theme = "islands-dark";
-      leader_timeout = 300;
-      mouse = true;
-      diff_style = "auto";
-      attention = {
-        enabled = true;
-        notifications = true;
-        sound = false;
-      };
-    };
-
     commands.openai-usage = ../../opencode/.config/opencode/commands/openai-usage.md;
     themes.islands-dark = ../../opencode/.config/opencode/themes/islands-dark.json;
+  };
+
+  xdg.configFile."opencode/cli.json".text = builtins.toJSON {
+    "$schema" = "https://opencode.ai/v2/cli.json";
+    theme = {
+      name = "islands-dark";
+      mode = "dark";
+    };
+    leader.timeout = 300;
+    mouse = true;
+    attention = {
+      notifications = true;
+      sound = false;
+    };
   };
 }
