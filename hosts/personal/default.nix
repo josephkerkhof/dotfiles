@@ -13,6 +13,7 @@
   homebrew = {
     casks = [
       "balenaetcher"
+      "chatgpt"
       "discord"
       "logos"
       "raspberry-pi-imager"
