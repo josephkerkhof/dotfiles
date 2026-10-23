@@ -121,13 +121,18 @@
           cp -R ${self.darwinConfigurations.personal.config.home-manager.users.${username}.home.activationPackage}/home-files/.config/opencode \
             "$test_home/config/opencode"
           chmod -R u+w "$test_home/config/opencode"
-          HOME="$test_home" \
+          export HOME="$test_home" \
             XDG_CONFIG_HOME="$test_home/config" \
             XDG_DATA_HOME="$test_home/data" \
             XDG_STATE_HOME="$test_home/state" \
             XDG_CACHE_HOME="$test_home/cache" \
-            OPENCODE_PURE=1 \
-            opencode debug config >/dev/null
+            OPENCODE_PURE=1
+          # macOS builds share the host network, so avoid the live service's port.
+          opencode service set port $((20000 + $$ % 20000))
+          status=0
+          opencode debug config >/dev/null || status=$?
+          opencode service stop
+          [ "$status" -eq 0 ]
           touch "$out"
         '';
       personal = self.darwinConfigurations.personal.system;
