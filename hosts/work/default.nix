@@ -23,7 +23,7 @@
       "docker-desktop"
       "elgato-control-center"
       "google-chrome"
-      "linear-linear"
+      "linear"
       "slack"
       "soundsource"
       "steam"
