@@ -234,9 +234,8 @@ Update one input, such as nixpkgs:
 nix flake update nixpkgs
 ```
 
-Determinate Nix resolves the nixpkgs input through FlakeHub. The lock follows
-the newest FlakeHub `0.2605` revision, which can lag the GitHub branch by days.
-An update that changes nothing means FlakeHub has not advanced.
+The workstation nixpkgs input follows GitHub's `nixpkgs-unstable` branch.
+Determinate Nix and its own nixpkgs dependencies resolve through FlakeHub.
 
 Review the `flake.lock` diff, build, activate, and test before committing an
 update. Updating inputs can change many packages at once even when no module was

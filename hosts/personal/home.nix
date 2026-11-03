@@ -1,1 +1,3 @@
-_: {}
+{pkgs, ...}: {
+  home.packages = [pkgs.codex];
+}

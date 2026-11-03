@@ -8,9 +8,9 @@
   };
 
   # Distrust roots tied to the emSign incident: https://emudhra.we-have-a-problem.com/
+  # emSign ECC Root CA - G3 is already absent from the upstream CA bundle.
   security.pki.caCertificateBlacklist = [
     "Comodo AAA Services root"
-    "emSign ECC Root CA - G3"
   ];
 
   security.pam.services.sudo_local = {

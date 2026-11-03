@@ -115,8 +115,8 @@ nix flake check path:. --print-build-logs
 nix build path:.#darwinConfigurations.<workstation>.system --out-link result-<workstation>
 ```
 
-The nixpkgs input resolves through FlakeHub; `nix flake update nixpkgs` follows
-the newest FlakeHub `0.2605` revision and may change nothing.
+The workstation nixpkgs input follows GitHub's `nixpkgs-unstable` branch.
+Determinate Nix and its own nixpkgs dependencies resolve through FlakeHub.
 
 Activation requires root and consists of both switching the system profile and
 running the built activation program. Successful activation retains the newest
