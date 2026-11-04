@@ -30,6 +30,7 @@
       Pages = 361309726;
       "Pixelmator Pro" = 1289583905;
       Wipr = 1662217862;
+      WireGuard = 1451685025;
     };
   };
 
