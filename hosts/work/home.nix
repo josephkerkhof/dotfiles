@@ -18,7 +18,7 @@ in {
       pkgs.claude-code
       pkgs.ipmitool
       pkgs.pnpm
-      pkgs.rsync
+      pkgs.rclone
       pkgs.rustc
       pkgs.rustfmt
       pkgs.wrangler
