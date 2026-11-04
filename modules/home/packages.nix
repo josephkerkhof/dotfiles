@@ -30,6 +30,13 @@
     ripgrep
     silver-searcher-ng
     switchaudio-osx
+    (texliveSmall.withPackages (ps:
+      with ps; [
+        fontspec
+        geometry
+        tools
+        xcolor
+      ]))
     tree
     tree-sitter
     wget
