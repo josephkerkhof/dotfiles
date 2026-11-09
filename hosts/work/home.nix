@@ -16,6 +16,8 @@ in {
       pkgs.bun
       pkgs.cargo
       pkgs.claude-code
+      pkgs.git-filter-repo
+      pkgs.gitleaks
       pkgs.ipmitool
       pkgs.pnpm
       pkgs.rclone
