@@ -27,8 +27,8 @@
   };
 
   pintPhar = pkgs.fetchurl {
-    url = "https://github.com/laravel/pint/releases/download/v1.32.1/pint.phar";
-    hash = "sha256-ivhdlMS2raHZAJn/HyvDLiyIU4ZJRzI2cZxRnGnjTl8=";
+    url = "https://github.com/laravel/pint/releases/download/v1.32.2/pint.phar";
+    hash = "sha256-43uEuAL8rHCak0cJDSHRvnJZspUGR4WoG+yWcpiTkQU=";
   };
 
   pint = pkgs.writeShellScriptBin "pint" ''

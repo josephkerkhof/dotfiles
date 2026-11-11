@@ -1,11 +1,11 @@
 {pkgs}:
 pkgs.stdenvNoCC.mkDerivation {
   pname = "opencode";
-  version = "2.2.5";
+  version = "2.2.7";
 
   src = pkgs.fetchurl {
-    url = "https://registry.npmjs.org/@opencode/cli-darwin-arm64/-/cli-darwin-arm64-2.2.5.tgz";
-    hash = "sha256-39gn3jKBtMPKKwv8j0vrED+mYMQZ0UihpRXENE+enAI=";
+    url = "https://registry.npmjs.org/@opencode/cli-darwin-arm64/-/cli-darwin-arm64-2.2.7.tgz";
+    hash = "sha256-jU+QxbI/qnJLoch32DWAcru2VlwzuNi13KfHZExN4L8=";
   };
 
   installPhase = ''
