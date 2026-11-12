@@ -6,6 +6,7 @@
 }: {
   nix-homebrew = {
     enable = true;
+    # Intel Homebrew stays disabled; modules/darwin/rosetta.nix installs Rosetta itself.
     enableRosetta = false;
     enableBashIntegration = false;
     enableFishIntegration = false;

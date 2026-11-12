@@ -29,6 +29,7 @@ configuration from the current hostname.
 | Neovim package and tools | Nix                 | `packages/neovim.nix`         |
 | Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |
 | Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
+| Homestar iDRAC console   | Nix/Home Manager    | [`packages/homestar-console/`](packages/homestar-console/README.md), `modules/home/homestar-console.nix` |
 | Screen-recording convert | Nix/Home Manager    | `packages/mov2web.*`          |
 
 The ownership rule is:
@@ -210,6 +211,17 @@ session data remain mutable outside the Nix store.
 Home Manager owns `~/.ssh/config`. Private keys, `known_hosts`, agent state, and
 the included local configuration remain mutable and must not enter this public
 repository or a Nix derivation.
+
+### Homestar iDRAC 6 console (both Macs)
+
+`homestar-console` provides on-demand browser access to Homestar's iDRAC 6
+console through a dedicated Colima VM. It is shared by both Macs and installed
+through `workstation apply`.
+Activation also installs **Homestar Console.app** under `~/Applications/Home Manager Apps`
+for launching the viewer from Spotlight.
+
+See the [package README](packages/homestar-console/README.md) for setup,
+credentials, launch/stop commands, troubleshooting, and verification details.
 
 ### Change the hosts file
 

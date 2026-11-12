@@ -7,6 +7,7 @@
     ./config-files.nix
     ./ghostty.nix
     ./git.nix
+    ./homestar-console.nix
     ./neovim.nix
     ./obs.nix
     ./opencode.nix

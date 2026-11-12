@@ -33,6 +33,7 @@
 | Workstation lifecycle utility                | Nix/Home Manager    | `packages/workstation.*`, `modules/home/packages.nix`       |
 | Screen-recording converter (work)            | Nix/Home Manager    | `packages/mov2web.*`, `hosts/work/home.nix`                 |
 | OBS screencast scenes and profile            | Home Manager        | `modules/home/obs.nix`, `hosts/*/home.nix`                  |
+| Shared Homestar iDRAC console                | Nix/Home Manager    | `packages/homestar-console/`, `modules/home/homestar-console.nix` |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
 applications; ngrok, and the font cask are existing explicit exceptions.
@@ -75,10 +76,27 @@ remain host-local and mutable.
   `modules/darwin/hosts.nix`; private mappings come from the private assets flake.
 - OpenCode automatic LSP downloads are disabled. Add workstation language
   servers through Home Manager or keep project-specific tools in devenv.
+- `homestar-console` is shared by both Macs. Its dedicated Colima profile is
+  on demand (ARM Linux, VZ/Rosetta, Docker), never an automatic login service.
+  Keep its Docker context isolated and browser listener on loopback. Credentials
+  remain in `~/.config/homestar-console/credentials.json`, outside Nix and Git.
+  The private-assets `homeModules.homestar` declares the non-secret
+  `homestar-console/connection.json`; never put credentials in that file.
+  Its Nix-built `Homestar Console.app` is copied by Home Manager into
+  `~/Applications/Home Manager Apps` for Spotlight discovery.
+  Do not stop other runtimes or change Homestar networking/firmware for this client.
 
 ## Change Rules
 
 - Add shared CLI packages to `modules/home/packages.nix`.
+- Keep multi-file packages under `packages/<name>/` with a `default.nix` entry
+  point and package-specific README. Link detailed package documentation from
+  the top-level README instead of duplicating it there.
+- Declare all workstation runtime prerequisites in Nix, including OS-provided
+  installers through idempotent nix-darwin activation when no Nix package exists.
+  Rosetta is shared in `modules/darwin/rosetta.nix`; do not leave it as a manual
+  prerequisite or enable Intel Homebrew merely to install it. Credentials and
+  runtime data remain mutable local state.
 - Add personal-only Home Manager state to `hosts/personal/home.nix` and
   work-only state to `hosts/work/home.nix`.
 - Add an app used only on one Mac to the Homebrew block of that host module.

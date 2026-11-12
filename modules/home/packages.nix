@@ -5,12 +5,14 @@
 }: {
   home.packages = with pkgs; [
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.workstation
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.homestar-console
     age
     blueutil
     cloudflared
     coreutils-prefixed
     curl
     doctl
+    docker-client
     fastfetch
     ffmpeg
     glow

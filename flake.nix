@@ -55,6 +55,7 @@
           ./modules/darwin/hosts.nix
           ./modules/darwin/homebrew.nix
           ./modules/darwin/defaults.nix
+          ./modules/darwin/rosetta.nix
           hostModule
         ];
       };
@@ -63,6 +64,9 @@
     darwinConfigurations.work = mkDarwin "work" ./hosts/work;
 
     packages.aarch64-darwin = {
+      homestar-console = import ./packages/homestar-console {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+      };
       neovim = import ./packages/neovim.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
@@ -81,6 +85,7 @@
     };
 
     checks.aarch64-darwin = {
+      homestar-console = self.packages.aarch64-darwin.homestar-console;
       mov2web = self.packages.aarch64-darwin.mov2web;
       neovim = self.packages.aarch64-darwin.neovim;
       openai-usage = self.packages.aarch64-darwin.openai-usage;
