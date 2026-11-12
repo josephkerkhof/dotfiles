@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   ...
 }: let
@@ -19,6 +20,8 @@ in {
       pkgs.git-filter-repo
       pkgs.gitleaks
       pkgs.ipmitool
+      # Its mysql* binaries take priority over the shared MySQL 8.4 ones.
+      (lib.hiPrio pkgs.mariadb.client)
       pkgs.pnpm
       pkgs.rclone
       pkgs.rustc
