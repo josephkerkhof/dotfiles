@@ -13,7 +13,7 @@ for jar in avctKVM.jar avctKVMIOLinux64.jar avctVMLinux64.jar; do
     destination=$jar
     [ "$jar" = avctKVM.jar ] || destination=lib/$jar
     echo "Downloading $jar from iDRAC"
-    wget --no-verbose --timeout=20 --tries=2 --no-check-certificate \
+    wget --no-verbose --timeout=20 --tries=10 --waitretry=1 --no-check-certificate \
         -O "$destination.part" "https://$IDRAC_HOST:$IDRAC_PORT/software/$jar" || {
         echo "Could not download $jar; check iDRAC address, HTTPS reachability, and container logs." >&2
         exit 1
