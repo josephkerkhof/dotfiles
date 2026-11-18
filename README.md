@@ -165,6 +165,11 @@ be signed in for `mas` applications. Existing Homebrew packages are upgraded
 from the revisions pinned in `flake.lock`; Homebrew does not update taps on its
 own.
 
+On the personal Mac, activation installs Xcode through the App Store and uses
+Xcode's installer when no usable iOS simulator runtime is present. If activation
+reports that Xcode's first-launch setup is pending, open Xcode and complete that
+setup, then run `workstation apply` again.
+
 ### Remove a GUI application
 
 Remove its declaration and activate the new system, then uninstall the app
