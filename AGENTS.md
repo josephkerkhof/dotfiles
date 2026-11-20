@@ -64,6 +64,9 @@ remain host-local and mutable.
 ## Active Paths
 
 - Ghostty is installed through Homebrew and configured through Home Manager.
+- Rex is a private beta, installed by hand on both Macs, and updates itself.
+  Home Manager links `rex/init.lua` read-only and writes its font and theme
+  (`rex/themes.json`) to the `com.superlogical.rex` user defaults on activation.
 - OBS is installed through Homebrew. Home Manager copies the generated
   `Screencast` scene collection and profile into the OBS config directory on
   every activation, so edits to that collection do not persist. Per-host

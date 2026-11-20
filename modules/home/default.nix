@@ -14,6 +14,7 @@
     ./opencode.nix
     ./packages.nix
     ./programs.nix
+    ./rex.nix
     ./shell.nix
     ./ssh.nix
   ];
