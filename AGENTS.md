@@ -26,6 +26,7 @@
 | Work user packages and aliases               | Home Manager        | `hosts/work/home.nix`                                       |
 | Work-private Git include and SSH hosts       | Private assets      | `homeModules.work` in `nix-private-assets`                  |
 | User CLI packages                            | Home Manager        | `modules/home/packages.nix`                                 |
+| Claude Code settings, hooks, skills, context | Home Manager        | `modules/home/claude-code.nix`, `claude/`                   |
 | Shell, Git, GPG, SSH, and managed files      | Home Manager        | `modules/home/*.nix`                                        |
 | Neovim package, plugins, parsers, and tools  | Nix                 | `packages/neovim.nix`                                       |
 | Neovim behavior                              | Packaged source     | `nvim/.config/nvim/`                                        |
@@ -67,6 +68,9 @@ remain host-local and mutable.
   `Screencast` scene collection and profile into the OBS config directory on
   every activation, so edits to that collection do not persist. Per-host
   display, camera, and microphone IDs live in `hosts/*/home.nix`.
+- Claude Code is installed and configured through Home Manager. Its
+  `settings.json`, `CLAUDE.md`, hooks, and managed skills are read-only links;
+  never edit them in `~/.claude`. Keep work-private settings out of this repo.
 - OpenCode is installed and configured through Home Manager. Its managed rule,
   command, and theme sources coexist with mutable state in its config directory.
 - `nvim/.config/nvim/` is active as source for the wrapped Nix Neovim package.

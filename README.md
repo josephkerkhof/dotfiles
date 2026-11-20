@@ -26,6 +26,7 @@ configuration from the current hostname.
 | Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`    |
 | OBS screencast scenes    | Home Manager/Brew   | `modules/home/obs.nix`        |
 | OpenCode                 | Home Manager        | `modules/home/opencode.nix`   |
+| Claude Code              | Home Manager        | `modules/home/claude-code.nix`, `claude/` |
 | Neovim package and tools | Nix                 | `packages/neovim.nix`         |
 | Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |
 | Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
@@ -205,6 +206,14 @@ dependencies are part of the Nix package.
 Automatic OpenCode language-server downloads are disabled. Language servers
 must come from Nix or the current project's devenv. Credentials, caches, and
 session data remain mutable outside the Nix store.
+
+### Change Claude Code
+
+- Edit `modules/home/claude-code.nix` for `settings.json` and the list of hooks and skills.
+- Edit `claude/` for the global `CLAUDE.md`, hook scripts, and skill sources.
+
+Home Manager links these files read-only into `~/.claude`. Sessions, history,
+plugin caches, project memory, and unmanaged skills remain mutable there.
 
 ### Change SSH
 

@@ -8,7 +8,6 @@
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.homestar-console
     age
     blueutil
-    claude-code
     cloudflared
     coreutils-prefixed
     curl
