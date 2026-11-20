@@ -8,6 +8,8 @@
 }: {
   determinateNix.enable = true;
 
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) ["claude-code"];
+
   system = {
     configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
     primaryUser = username;

@@ -1,14 +1,10 @@
 {
   inputs,
-  lib,
   pkgs,
   username,
   ...
 }: {
-  nixpkgs = {
-    hostPlatform = "aarch64-darwin";
-    config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) ["claude-code"];
-  };
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
   networking.hostName = "Active-Engagement-MacBook-Pro";
 

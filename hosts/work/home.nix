@@ -16,7 +16,6 @@ in {
       pkgs.awscli2
       pkgs.bun
       pkgs.cargo
-      pkgs.claude-code
       pkgs.git-filter-repo
       pkgs.gitleaks
       pkgs.ipmitool
