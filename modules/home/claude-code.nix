@@ -19,6 +19,7 @@ in {
     };
 
     skills.address-pr-comments = ../../claude/skills/address-pr-comments;
+    skills.rex = ../../claude/skills/rex;
 
     settings = {
       permissions.defaultMode = "auto";
@@ -52,6 +53,19 @@ in {
             {
               type = "command";
               command = "${lib.getExe pkgs.python3} $HOME/.claude/hooks/block-prose-comments.py";
+            }
+          ];
+        }
+      ];
+
+      # Same hook that `rex skill setup --agent claude` writes.
+      hooks.SessionStart = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = "/bin/sh -c 'rex __internal session-start --agent claude --feature-session-naming=false 2>/dev/null || true'";
+              timeout = 5;
             }
           ];
         }
