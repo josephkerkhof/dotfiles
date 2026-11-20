@@ -10,6 +10,8 @@
     cp -r ${pkgs.rustPlatform.rustLibSrc} $out/library
   '';
 in {
+  imports = [./rex.nix];
+
   home = {
     packages = [
       inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mov2web
