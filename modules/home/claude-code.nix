@@ -10,16 +10,14 @@
 in {
   programs.claude-code = {
     enable = true;
-    context = ../../claude/CLAUDE.md;
+    context = ../../agents/AGENTS.md;
+    skills = ../../agents/skills;
 
     hooks = {
       "block-commit-attribution.sh" = ../../claude/hooks/block-commit-attribution.sh;
       "block-destructive.sh" = ../../claude/hooks/block-destructive.sh;
       "block-prose-comments.py" = ../../claude/hooks/block-prose-comments.py;
     };
-
-    skills.address-pr-comments = ../../claude/skills/address-pr-comments;
-    skills.rex = ../../claude/skills/rex;
 
     settings = {
       permissions.defaultMode = "auto";

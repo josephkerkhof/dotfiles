@@ -25,8 +25,10 @@ configuration from the current hostname.
 | Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
 | Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`    |
 | OBS screencast scenes    | Home Manager/Brew   | `modules/home/obs.nix`        |
+| Shared agent rules/skills | Home Manager       | `modules/home/agents.nix`, `agents/` |
 | OpenCode                 | Home Manager        | `modules/home/opencode.nix`   |
 | Claude Code              | Home Manager        | `modules/home/claude-code.nix`, `claude/` |
+| Codex (personal)         | Home Manager        | `hosts/personal/home.nix`     |
 | Neovim package and tools | Nix                 | `packages/neovim.nix`         |
 | Neovim behavior          | Neovim source       | `nvim/.config/nvim/`          |
 | Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
@@ -198,10 +200,16 @@ activations.
 Neovim does not use Lazy, Mason, or runtime Treesitter downloads. Its runtime
 dependencies are part of the Nix package.
 
+### Change agent instructions and skills
+
+- Edit `agents/AGENTS.md` for the global instructions of Claude Code, Codex, and OpenCode.
+- Add or edit a skill folder in `agents/skills/`. Home Manager links each one
+  into `~/.claude/skills` and `~/.agents/skills`.
+
 ### Change OpenCode
 
 - Edit `modules/home/opencode.nix` for OpenCode settings and dependencies.
-- Edit `opencode/.config/opencode/` for managed rule, command, and theme sources.
+- Edit `opencode/.config/opencode/` for managed command and theme sources.
 
 Automatic OpenCode language-server downloads are disabled. Language servers
 must come from Nix or the current project's devenv. Credentials, caches, and
@@ -209,8 +217,8 @@ session data remain mutable outside the Nix store.
 
 ### Change Claude Code
 
-- Edit `modules/home/claude-code.nix` for `settings.json` and the list of hooks and skills.
-- Edit `claude/` for the global `CLAUDE.md`, hook scripts, and skill sources.
+- Edit `modules/home/claude-code.nix` for `settings.json` and the list of hooks.
+- Edit `claude/` for hook scripts.
 
 Home Manager links these files read-only into `~/.claude`. Sessions, history,
 plugin caches, project memory, and unmanaged skills remain mutable there.

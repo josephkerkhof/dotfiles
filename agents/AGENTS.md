@@ -8,9 +8,14 @@ the stated goal until done or hard-blocked. Use background tasks and monitors.
 Send a push notification on completion or blockage. Report numbers first on my return.
 
 
+# Language
+
+Only generate output and talk to me in ASD-STE100 Simplified Technical English.
+
+
 # Committing
 
-Don't ever enter your name (Claude or Claude Code) into my commit messages.
+Don't ever enter your name or your product's name (such as Claude, Claude Code, or Codex) into my commit messages.
 Don't ever enter co-authored text in commit messages.
 
 
@@ -24,8 +29,13 @@ If you feel the urge to write paragraph-long comments, you need to make the code
 code is doing. I will grant you exceptions to this rule, but they must be approved explicitly by me.
 
 
-# Claude Code configuration
+# Agent configuration
 
-`~/.claude/CLAUDE.md`, `settings.json`, `hooks/`, and the managed skills are read-only links from `~/dotfiles`.
-Do not edit them in `~/.claude`. Change the sources in `~/dotfiles/claude/` and
-`~/dotfiles/modules/home/claude-code.nix`, build, and ask me to activate.
+These instructions, the shared skills, and the managed agent settings and hooks are read-only links from `~/dotfiles`.
+Do not edit them in `~/.claude`, `~/.codex`, `~/.config/opencode`, `~/.config/agents`, or `~/.agents/skills`.
+Change the sources in `~/dotfiles`, build, and ask me to activate:
+
+- `agents/`: these instructions and the skills that all agents share.
+- `claude/` and `modules/home/claude-code.nix`: Claude Code settings and hooks.
+- `hosts/personal/home.nix`: Codex package and hooks (personal Mac only).
+- `opencode/` and `modules/home/opencode.nix`: OpenCode settings, commands, and themes.

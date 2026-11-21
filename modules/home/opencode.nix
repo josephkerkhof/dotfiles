@@ -22,9 +22,9 @@
       yaml-language-server
     ];
 
-    settings = {
-      instructions = ["rules/asd-ste100.md"];
+    context = ../../agents/AGENTS.md;
 
+    settings = {
       lsp = {
         bash.command = [
           "bash-language-server"

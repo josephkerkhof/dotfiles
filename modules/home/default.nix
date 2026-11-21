@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./agents.nix
     ./claude-code.nix
     ./config-files.nix
     ./ghostty.nix
