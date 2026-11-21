@@ -22,6 +22,9 @@ in {
     settings = {
       permissions.defaultMode = "auto";
 
+      # Needs Claude Code v2.1.323 or later.
+      env.CLAUDE_CODE_EXPERIMENTAL_CODE_MODE = "1";
+
       # These skills are installed only on the work Mac and stay disabled.
       skillOverrides = lib.genAttrs [
         "deep-agents-core"
