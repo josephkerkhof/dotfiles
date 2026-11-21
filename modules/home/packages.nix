@@ -10,6 +10,12 @@
     blueutil
     cloudflared
     coreutils-prefixed
+    (runCommand "coreutils-extras" {} ''
+      mkdir -p $out/bin
+      for tool in b2sum base32 basenc factor nproc numfmt shred shuf tac; do
+        ln -s ${coreutils}/bin/$tool $out/bin/$tool
+      done
+    '')
     curl
     doctl
     docker-client
