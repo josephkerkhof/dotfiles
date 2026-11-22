@@ -14,7 +14,7 @@
   homebrew = {
     casks = [
       "balenaetcher"
-      "chatgpt"
+      "claude"
       "discord"
       "logos"
       "musescore"
