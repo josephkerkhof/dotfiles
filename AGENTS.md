@@ -35,6 +35,7 @@
 | Project runtimes and services                | Project devenv      | Outside this workstation profile                            |
 | Workstation lifecycle utility                | Nix/Home Manager    | `packages/workstation.*`, `modules/home/packages.nix`       |
 | Screen-recording converter (work)            | Nix/Home Manager    | `packages/mov2web.*`, `hosts/work/home.nix`                 |
+| MuseScore MCP server (personal)              | Nix/Home Manager    | `packages/mcp-musescore.nix`, `hosts/personal/home.nix`     |
 | OBS screencast scenes and profile            | Home Manager        | `modules/home/obs.nix`, `hosts/*/home.nix`                  |
 | Shared Homestar iDRAC console                | Nix/Home Manager    | `packages/homestar-console/`, `modules/home/homestar-console.nix` |
 
@@ -84,7 +85,18 @@ remain host-local and mutable.
   never edit them in `~/.claude`. Keep work-private settings out of this repo.
 - Codex is installed and configured through Home Manager on the personal Mac
   only. Its `AGENTS.md` and `hooks.json` are read-only links. Codex writes
-  `config.toml` and `rules/` itself, so they stay mutable.
+  `config.toml` and `rules/` itself, so they stay mutable. Activation merges
+  the declared MCP servers into `config.toml` (`mutableSettings`).
+- MuseScore is a personal Homebrew cask. `packages/mcp-musescore.nix` wraps the
+  upstream `ghchen99/mcp-musescore` server, pinned by the `mcp-musescore`
+  flake input. At first start, uv installs the versions in upstream `uv.lock`
+  into `~/.cache/mcp-musescore/venv`. `programs.mcp` in
+  `hosts/personal/home.nix` registers it with Claude Code, Codex, and OpenCode.
+  Activation copies the QML plugin into `~/Documents/MuseScore4/Plugins`;
+  enabling and starting the plugin in MuseScore stays manual. The shared
+  `mcp-musescore` and `musescore-drum-chart` skills in `agents/skills/` are
+  adapted copies of the upstream skills at rev `5e14d36`. A flake update does
+  not change them. Both hosts get the skills; only the personal Mac has the server.
 - OpenCode is installed and configured through Home Manager. Its managed
   command and theme sources coexist with mutable state in its config directory.
 - `nvim/.config/nvim/` is active as source for the wrapped Nix Neovim package.

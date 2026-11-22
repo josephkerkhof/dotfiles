@@ -17,6 +17,7 @@
       "chatgpt"
       "discord"
       "logos"
+      "musescore"
       "raspberry-pi-imager"
       "signal"
       "steam"

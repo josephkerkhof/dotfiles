@@ -27,6 +27,11 @@
       flake = false;
     };
 
+    mcp-musescore = {
+      url = "github:ghchen99/mcp-musescore";
+      flake = false;
+    };
+
     private-assets = {
       url = "git+ssh://git@github.com/josephkerkhof/nix-private-assets.git";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -76,6 +81,10 @@
       opencode-v2 = import ./packages/opencode-v2.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
+      mcp-musescore = import ./packages/mcp-musescore.nix {
+        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        src = inputs.mcp-musescore;
+      };
       mov2web = import ./packages/mov2web.nix {
         pkgs = nixpkgs.legacyPackages.aarch64-darwin;
       };
@@ -86,6 +95,7 @@
 
     checks.aarch64-darwin = {
       homestar-console = self.packages.aarch64-darwin.homestar-console;
+      mcp-musescore = self.packages.aarch64-darwin.mcp-musescore;
       mov2web = self.packages.aarch64-darwin.mov2web;
       neovim = self.packages.aarch64-darwin.neovim;
       openai-usage = self.packages.aarch64-darwin.openai-usage;

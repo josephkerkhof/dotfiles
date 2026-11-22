@@ -34,6 +34,7 @@ configuration from the current hostname.
 | Workstation utility      | Nix/Home Manager    | `packages/workstation.*`      |
 | Homestar iDRAC console   | Nix/Home Manager    | [`packages/homestar-console/`](packages/homestar-console/README.md), `modules/home/homestar-console.nix` |
 | Screen-recording convert | Nix/Home Manager    | `packages/mov2web.*`          |
+| MuseScore MCP (personal) | Nix/Home Manager    | `packages/mcp-musescore.nix`, `hosts/personal/home.nix` |
 
 The ownership rule is:
 
@@ -244,6 +245,27 @@ for launching the viewer from Spotlight.
 
 See the [package README](packages/homestar-console/README.md) for setup,
 credentials, launch/stop commands, troubleshooting, and verification details.
+
+### MuseScore MCP server (personal Mac)
+
+MuseScore is a personal Homebrew cask. The `ghchen99/mcp-musescore` server is
+pinned by the `mcp-musescore` flake input and registered as `musescore` with
+Claude Code, Codex, and OpenCode through `programs.mcp` in
+`hosts/personal/home.nix`. At first start, uv installs the Python versions
+from upstream `uv.lock` into `~/.cache/mcp-musescore/venv`.
+
+Activation copies the QML plugin into `~/Documents/MuseScore4/Plugins`. Once,
+enable **MuseScore API Server** in **Plugins → Plugin Manager**. Before an
+agent uses the tools, open a score and run **Plugins → MuseScore API Server**.
+The plugin listens on `ws://localhost:8765`.
+
+Update the server and plugin together with `nix flake update mcp-musescore`,
+then restart MuseScore and the agent.
+
+The `mcp-musescore` and `musescore-drum-chart` skills in `agents/skills/` are
+adapted copies of the upstream skills at rev `5e14d36`, with their upstream
+license. A flake update does not change them; copy and adapt them again by hand.
+Both hosts get the skills, but only the personal Mac has the server.
 
 ### Change the hosts file
 
