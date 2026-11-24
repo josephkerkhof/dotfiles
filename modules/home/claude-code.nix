@@ -13,6 +13,13 @@ in {
     context = ../../agents/AGENTS.md;
     skills = ../../agents/skills;
 
+    # Same PHP server as Neovim and OpenCode.
+    lspServers.phpantom = {
+      command = lib.getExe pkgs.phpantom-lsp;
+      args = ["--stdio"];
+      extensionToLanguage.".php" = "php";
+    };
+
     hooks = {
       "block-commit-attribution.sh" = ../../claude/hooks/block-commit-attribution.sh;
       "block-destructive.sh" = ../../claude/hooks/block-destructive.sh;
@@ -78,7 +85,7 @@ in {
         "warp@claude-code-warp" = true;
         "pyright-lsp@claude-plugins-official" = false;
         "skill-creator@claude-plugins-official" = false;
-        "php-lsp@claude-plugins-official" = true;
+        "php-lsp@claude-plugins-official" = false;
         "be-terse@be-terse" = true;
         "swift-lsp@claude-plugins-official" = true;
       };
