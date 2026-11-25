@@ -17,6 +17,7 @@
     ./programs.nix
     ./rex.nix
     ./shell.nix
+    ./soundsource.nix
     ./ssh.nix
   ];
 

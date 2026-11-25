@@ -35,6 +35,7 @@
       "netnewswire"
       "ngrok"
       "obs"
+      "soundsource"
       "vlc"
     ];
 

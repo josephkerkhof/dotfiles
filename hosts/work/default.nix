@@ -21,7 +21,6 @@
       "google-chrome"
       "linear"
       "slack"
-      "soundsource"
       "steam"
     ];
     brews = ["mas"];

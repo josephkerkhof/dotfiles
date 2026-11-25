@@ -37,6 +37,7 @@
 | Screen-recording converter (work)            | Nix/Home Manager    | `packages/mov2web.*`, `hosts/work/home.nix`                 |
 | MuseScore MCP server (personal)              | Nix/Home Manager    | `packages/mcp-musescore.nix`, `hosts/personal/home.nix`     |
 | OBS screencast scenes and profile            | Home Manager        | `modules/home/obs.nix`, `hosts/*/home.nix`                  |
+| SoundSource headphone EQ profile             | Home Manager        | `modules/home/soundsource.nix`, `soundsource/`              |
 | Shared Homestar iDRAC console                | Nix/Home Manager    | `packages/homestar-console/`, `modules/home/homestar-console.nix` |
 
 Homebrew is limited to declared casks and the `mas` formula. Most casks are GUI
@@ -74,6 +75,11 @@ remain host-local and mutable.
   `Screencast` scene collection and profile into the OBS config directory on
   every activation, so edits to that collection do not persist. Per-host
   display, camera, and microphone IDs live in `hosts/*/home.nix`.
+- SoundSource is a shared Homebrew cask. Home Manager links the headphone EQ
+  profile in `soundsource/` to `~/.config/soundsource`. The license, ARK
+  driver, effects, and device settings are mutable app state; never manage them
+  in Nix. Effects belong to System Output, not to a device, so Audio Processing
+  is off for every output device except the Topping DX3 Pro+.
 - `agents/AGENTS.md` is the global instruction file for every agent: Claude
   Code (`~/.claude/CLAUDE.md`), Codex (`~/.codex/AGENTS.md`), and OpenCode
   (`~/.config/opencode/AGENTS.md`). Home Manager links each skill in

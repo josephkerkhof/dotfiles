@@ -25,6 +25,7 @@ configuration from the current hostname.
 | Shell, Git, GPG, and SSH | Home Manager        | `modules/home/*.nix`          |
 | Ghostty                  | Home Manager/Brew   | `modules/home/ghostty.nix`    |
 | OBS screencast scenes    | Home Manager/Brew   | `modules/home/obs.nix`        |
+| SoundSource headphone EQ | Home Manager/Brew   | `modules/home/soundsource.nix`, `soundsource/` |
 | Shared agent rules/skills | Home Manager       | `modules/home/agents.nix`, `agents/` |
 | OpenCode                 | Home Manager        | `modules/home/opencode.nix`   |
 | Claude Code              | Home Manager        | `modules/home/claude-code.nix`, `claude/` |
@@ -245,6 +246,28 @@ for launching the viewer from Spotlight.
 
 See the [package README](packages/homestar-console/README.md) for setup,
 credentials, launch/stop commands, troubleshooting, and verification details.
+
+### SoundSource headphone EQ (both Macs)
+
+SoundSource is a shared Homebrew cask. Home Manager links the headphone EQ
+profile in `soundsource/` to `~/.config/soundsource`.
+
+Do these steps one time on each Mac:
+
+1. Open SoundSource. Install the ARK audio driver with your admin password.
+2. Give System Audio Access and Microphone Access.
+3. In the License window, enter the name and code from the purchase email.
+4. Under **System → Output**, add **Headphone EQ**. Select
+   **Add Other Profile…**, press Command-Shift-G, and open
+   `~/.config/soundsource/Beyerdynamic DT 1990 (analytic earpads).txt`.
+5. In the Audio Devices window, set **Advanced → Audio Processing** to off for
+   each output device except the DX3 Pro+. Do this again for each new device.
+
+SoundSource keeps Output effects on the system output, not on one device.
+Step 5 keeps the EQ off the other devices. Keep app effects flat and Boost off.
+SoundSource copies the profile when it loads it, so load it again after you
+change the file. The license, driver, and effect settings stay in SoundSource's
+own mutable settings.
 
 ### MuseScore MCP server (personal Mac)
 
