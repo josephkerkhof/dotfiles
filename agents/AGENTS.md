@@ -21,6 +21,10 @@ Don't ever enter co-authored text in commit messages.
 
 # Writing code
 
+## Tautology
+
+Tautological labels, tests, and UI components are considered harmful.
+
 ## Comments
 
 Avoid writing paragraph-long comments. Comments should be two lines long at most.
